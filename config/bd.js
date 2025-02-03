@@ -1,20 +1,21 @@
 // config/db.js
-const mysql = require("mysql2");
+const { Client } = require("pg");
 require("dotenv").config();
 
-const connection = mysql.createConnection({
+const client = new Client({
   host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 5432,  // Puerto por defecto para PostgreSQL
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
 
-connection.connect((err) => {
+client.connect((err) => {
   if (err) {
-    console.error("Error a la conexion a la base de datos:", err);
+    console.error("Error al conectar a la base de datos:", err);
     return;
   }
-  console.log("Conectado a la base de datos");
+  console.log("Conectado a la base de datos PostgreSQL");
 });
 
-module.exports = connection;
+module.exports = client;
