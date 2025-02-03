@@ -15,10 +15,5 @@ app.get('/', (req, res) => {
   res.send('¡Bienvenido a la API de Aeropuertos!');
 });
 
-// Iniciar el servidor
-const port = process.env.PORT || 3003;
 
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
-});
 
