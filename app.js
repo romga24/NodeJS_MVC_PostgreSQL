@@ -1,16 +1,14 @@
 const express = require("express");
-const cors = require("cors"); // Importar CORS
-const dotenv = require("dotenv");
-
-dotenv.config();
+const cors = require("cors");
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config();
 const aeropuertoRoutes = require("./routes/aeropuertoRoutes");
-
-// Middleware para CORS - Permitir acceso desde cualquier origen
-app.use(cors());
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+app.use(cors());
 
 // Usar las rutas de aeropuerto
 app.use("/api/aeropuertos", aeropuertoRoutes);
@@ -20,5 +18,11 @@ app.get("/", (req, res) => {
   res.send("¡Bienvenido a la API de Aeropuertos!");
 });
 
-module.exports = app;
+// ⬇️ CORRECCIÓN: Usa `0.0.0.0` para Render y `process.env.PORT`
+const port = process.env.PORT || 3003;
+app.listen(port, "0.0.0.0", () => {
+  console.log(`✅ Servidor corriendo en el puerto ${port}`);
+});
+
+
 
