@@ -38,19 +38,30 @@ const Cliente = {
       "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1", 
       [usuarioOEmail], 
       (err, results) => {
-        if (err) return callback(err);  // Si ocurre un error en la consulta, lo devolvemos al callback
+        if (err) {
+          console.error('Error en la consulta SQL:', err);
+          return callback(err);  // Si ocurre un error en la consulta, lo devolvemos al callback
+        }
   
         if (results.rows.length === 0) {
-          return callback(null, null);  // Si no se encuentra al usuario, retornamos null
+          console.log('No se encontró el usuario');
+          return callback(null, false);  // Si no se encuentra al usuario, devolvemos false
         }
   
         const usuario = results.rows[0];  // Desestructuramos el primer usuario encontrado
   
         bcrypt.compare(password, usuario.contraseña, (err, isMatch) => {
-          if (err) return callback(err);  // Si ocurre un error al comparar las contraseñas, lo devolvemos
-          if (!isMatch) return callback(null, false);  // Si las contraseñas no coinciden, devolvemos null
+          if (err) {
+            console.error('Error al comparar contraseñas:', err);
+            return callback(err);  // Si ocurre un error al comparar las contraseñas, lo devolvemos
+          }
+          if (!isMatch) {
+            console.log('Contraseña incorrecta');
+            return callback(null, false);  // Si las contraseñas no coinciden, devolvemos false
+          }
           
-          callback(null, true);  // Si la contraseña es correcta, devolvemos el usuario
+          console.log('Inicio de sesión exitoso');
+          callback(null, true);  // Si la contraseña es correcta, devolvemos true
         });
       }
     );
