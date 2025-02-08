@@ -4,24 +4,24 @@ const bcrypt = require("bcryptjs");
 const Cliente = {
   
   getAll: (callback) => {
-    db.query("SELECT * FROM clientes", callback);
+    db.query("SELECT * FROM t_clientes", callback);
   },
 
   getById: (id, callback) => {
-    db.query("SELECT * FROM clientes WHERE id_cliente = ?", [id], callback);
+    db.query("SELECT * FROM t_clientes WHERE id_cliente = ?", [id], callback);
   },
 
   create: (data, callback) => {
     bcrypt.hash(data.password, 10, (err, hash) => {
       if (err) return callback(err);
       data.password = hash;
-      db.query("INSERT INTO clientes SET ?", data, callback);
+      db.query("INSERT INTO t_clientes SET ?", data, callback);
     });
   },
 
   login: (usuarioOEmail, password, callback) => {
     db.query(
-      "SELECT * FROM clientes WHERE nombre_usuario = ? OR email = ?", 
+      "SELECT * FROM t_clientes WHERE nombre_usuario = ? OR email = ?", 
       [usuarioOEmail, usuarioOEmail], 
       (err, results) => {
         if (err) return callback(err);
@@ -41,15 +41,15 @@ const Cliente = {
       bcrypt.hash(data.password, 10, (err, hash) => {
         if (err) return callback(err);
         data.password = hash;
-        db.query("UPDATE clientes SET ? WHERE id_cliente = ?", [data, id], callback);
+        db.query("UPDATE t_clientes SET ? WHERE id_cliente = ?", [data, id], callback);
       });
     } else {
-      db.query("UPDATE clientes SET ? WHERE id_cliente = ?", [data, id], callback);
+      db.query("UPDATE t_clientes SET ? WHERE id_cliente = ?", [data, id], callback);
     }
   },
 
   delete: (id, callback) => {
-    db.query("DELETE FROM clientes WHERE id_cliente = ?", [id], callback);
+    db.query("DELETE FROM t_clientes WHERE id_cliente = ?", [id], callback);
   },
 };
 
