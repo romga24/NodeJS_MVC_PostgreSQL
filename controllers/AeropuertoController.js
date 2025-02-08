@@ -14,23 +14,20 @@ class AeropuertoController {
     });
   };
   
-  getClienteById(req, res) {
-    const id = parseInt(req.params.id);  // Convertir el id a número entero
-    if (isNaN(id)) {
-      return res.status(400).json({ message: "El ID debe ser un número válido" });
-    }
-  
-    Cliente.getById(id, (err, results) => {
+  getAeropuertoById = (req, res) => {
+    const id = req.params.id;
+    aeropuertoModel.getById(id, (err, results) => {
       if (err) {
-        return res.status(500).json({ error: "Error al obtener el cliente", details: err.message });
+        res.status(500).json({ error: err.message });
+        return;
       }
       if (results.length === 0) {
-        return res.status(404).json({ message: "Cliente no encontrado" });
+        res.status(404).json({ message: "Aeropuerto no encontrado" });
+        return;
       }
-      res.status(200).json(results[0]);  // Devolver el primer cliente encontrado
+      res.status(200).json(results[0]);
     });
-  }
-  
+  };
   
   createAeropuerto = (req, res) => {
     const data = req.body;
