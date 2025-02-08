@@ -35,21 +35,27 @@ const Cliente = {
 
   login: (usuarioOEmail, password, callback) => {
     db.query(
-      "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1",  // Actualizado para PostgreSQL
+      "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1", 
       [usuarioOEmail], 
       (err, results) => {
-        if (err) return callback(err);  // Si hay error, lo devolvemos
-        if (results.rows.length === 0) return callback(null, null);  // Si no se encuentra al usuario, retornamos null
+        if (err) return callback(err);  // Si ocurre un error en la consulta, lo devolvemos al callback
   
-        // Comparar la contraseña encriptada con la que el usuario ha proporcionado
-        bcrypt.compare(password, results.rows[0].contraseña, (err, isMatch) => {
-          if (err) return callback(err);  // Si hay error, lo devolvemos
-          if (!isMatch) return callback(null, null);  // Si no coincide la contraseña, devolvemos null
-          callback(null, results.rows[0]);  // Si la contraseña es correcta, devolvemos el usuario
+        if (results.rows.length === 0) {
+          return callback(null, null);  // Si no se encuentra al usuario, retornamos null
+        }
+  
+        const usuario = results.rows[0];  // Desestructuramos el primer usuario encontrado
+  
+        bcrypt.compare(password, usuario.contraseña, (err, isMatch) => {
+          if (err) return callback(err);  // Si ocurre un error al comparar las contraseñas, lo devolvemos
+          if (!isMatch) return callback(null, null);  // Si las contraseñas no coinciden, devolvemos null
+          
+          callback(null, usuario);  // Si la contraseña es correcta, devolvemos el usuario
         });
       }
     );
   },
+
 
   update: (id, data, callback) => {
     if (data.password) {
