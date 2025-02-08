@@ -46,7 +46,7 @@ exports.loginCliente = (req, res) => {
   clienteModel.login(usuarioOEmail, contraseña, (err, response) => {
     if (err) return res.status(500).json({ error: "Error al intentar iniciar sesión", details: err.message });
     if (!response) return res.status(401).json({ message: "Credenciales incorrectas" });
-    res.status(200).json(response);
+    res.status(200).json({ message: "Credenciales correctas" });
   });
 };
 

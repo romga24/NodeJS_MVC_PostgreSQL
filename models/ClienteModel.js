@@ -35,24 +35,12 @@ const Cliente = {
 
   login: (usuarioOEmail, password, callback) => {
     const query = "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1";
-
     db.query(query, [usuarioOEmail], (err, results) => {
-        if (err) {
-            return callback(err);
-        }
-
-        if (results.rows.length === 0) {
-            return callback(null, false); // Usuario no encontrado
-        }
-
+        if (err)  return callback(err);
+        if (results.rows.length === 0) return callback(null, false);  
         const usuario = results.rows[0];
-
-        // Comparar directamente la contraseña
-        if (password === usuario.contraseña) {
-            return callback(null, true); // Contraseña correcta
-        } else {
-            return callback(null, false); // Contraseña incorrecta
-        }
+        if (password === usuario.contraseña) return callback(null, true); 
+        else return callback(null, false); 
     });
 },
 
