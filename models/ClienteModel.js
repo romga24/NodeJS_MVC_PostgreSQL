@@ -35,31 +35,26 @@ const Cliente = {
 
   login: (usuarioOEmail, password, callback) => {
     const query = "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1";
-    
+
     db.query(query, [usuarioOEmail], (err, results) => {
         if (err) {
             return callback(err);
         }
 
         if (results.rows.length === 0) {
-            return callback(null, false);
+            return callback(null, false); // Usuario no encontrado
         }
 
         const usuario = results.rows[0];
-        
-        bcrypt.compare(password, usuario.contraseña, (err, isMatch) => {
-            if (err) {
-                return callback(err);
-            }
 
-            if (!isMatch) {
-                return callback(null, false);
-            }
-            
-            callback(null, true); // Retornamos el usuario en lugar de solo 'true'
-        });
+        // Comparar directamente la contraseña
+        if (password === usuario.contraseña) {
+            return callback(null, true); // Contraseña correcta
+        } else {
+            return callback(null, false); // Contraseña incorrecta
+        }
     });
-  },
+},
 
 
   update: (id, data, callback) => {
