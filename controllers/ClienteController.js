@@ -36,7 +36,6 @@ exports.createCliente = (req, res) => {
   });
 };
 
-// Login de cliente
 exports.loginCliente = (req, res) => {
   const { usuarioOEmail, contraseña } = req.body;
   
@@ -64,7 +63,6 @@ exports.updateCliente = (req, res) => {
   });
 };
 
-// Eliminar un cliente
 exports.deleteCliente = (req, res) => {
   const { id } = req.params;
 

@@ -48,9 +48,9 @@ const Cliente = {
   
         bcrypt.compare(password, usuario.contraseña, (err, isMatch) => {
           if (err) return callback(err);  // Si ocurre un error al comparar las contraseñas, lo devolvemos
-          if (!isMatch) return callback(null, null);  // Si las contraseñas no coinciden, devolvemos null
+          if (!isMatch) return callback(null, false);  // Si las contraseñas no coinciden, devolvemos null
           
-          callback(null, usuario);  // Si la contraseña es correcta, devolvemos el usuario
+          callback(null, true);  // Si la contraseña es correcta, devolvemos el usuario
         });
       }
     );
