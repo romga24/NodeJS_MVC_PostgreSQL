@@ -1,36 +1,27 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
-const dotenv = require("dotenv");
-
-dotenv.config();
-
-/*********************************************************
- * Rutas donde estan definidos los controladores
- ********************************************************/
 const aeropuertoRoutes = require("./routes/AeropuertoRoutes");
 const clienteRoutes = require("./routes/ClienteRoutes");
 
+const app = express();
 
 // Middleware para parsear JSON
 app.use(express.json());
 app.use(cors());
 
-/*********************************************************
- * Rutas para definir las APIs correspondientes
- ********************************************************/
+// Configura las rutas
 app.use("/api/aeropuertos", aeropuertoRoutes);
-app.use("/api/clientes", clienteRoutes)
+app.use("/api/clientes", clienteRoutes);
 
-// Ruta de prueba para la raíz
+// Ruta de prueba
 app.get("/", (req, res) => {
-  res.send("¡Bienvenido a la API de Aeropuertos!");
+  res.send("¡Bienvenido a la API!");
 });
 
-// ⬇️ CORRECCIÓN: Usa `0.0.0.0` para Render y `process.env.PORT`
+// Inicia el servidor
 const port = process.env.PORT || 3003;
 app.listen(port, "0.0.0.0", () => {
-  console.log(`✅ Servidor corriendo en el puerto ${port}`);
+  console.log(`Servidor corriendo en el puerto ${port}`);
 });
 
 
