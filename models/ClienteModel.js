@@ -34,37 +34,31 @@ const Cliente = {
   },
 
   login: (usuarioOEmail, password, callback) => {
-    db.query(
-      "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1", 
-      [usuarioOEmail], 
-      (err, results) => {
+    const query = "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1";
+    
+    db.query(query, [usuarioOEmail], (err, results) => {
         if (err) {
-          console.error('Error en la consulta SQL:', err);
-          return callback(err);  // Si ocurre un error en la consulta, lo devolvemos al callback
+            return callback(err);
         }
-  
+
         if (results.rows.length === 0) {
-          console.log('No se encontró el usuario');
-          return callback(null, false);  // Si no se encuentra al usuario, devolvemos false
+            return callback(null, false);
         }
-  
-        const usuario = results.rows[0];  // Desestructuramos el primer usuario encontrado
-  
+
+        const usuario = results.rows[0];
+        
         bcrypt.compare(password, usuario.contraseña, (err, isMatch) => {
-          if (err) {
-            console.error('Error al comparar contraseñas:', err);
-            return callback(err);  // Si ocurre un error al comparar las contraseñas, lo devolvemos
-          }
-          if (!isMatch) {
-            console.log('Contraseña incorrecta');
-            return callback(null, false);  // Si las contraseñas no coinciden, devolvemos false
-          }
-          
-          console.log('Inicio de sesión exitoso');
-          callback(null, true);  // Si la contraseña es correcta, devolvemos true
+            if (err) {
+                return callback(err);
+            }
+
+            if (!isMatch) {
+                return callback(null, false);
+            }
+            
+            callback(null, true); // Retornamos el usuario en lugar de solo 'true'
         });
-      }
-    );
+    });
   },
 
 
