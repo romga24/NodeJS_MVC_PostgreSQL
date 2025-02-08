@@ -8,8 +8,8 @@ dotenv.config();
 /*********************************************************
  * Rutas donde estan definidos los controladores
  ********************************************************/
-const AeropuertoRoutes = require("./routes/AeropuertoRoutes");
-const ClienteRoutes = require("./routes/ClienteRoutes");
+const aeropuertoRoutes = require("./routes/AeropuertoRoutes");
+const clienteRoutes = require("./routes/ClienteRoutes");
 
 
 // Middleware para parsear JSON
@@ -19,8 +19,8 @@ app.use(cors());
 /*********************************************************
  * Rutas para definir las APIs correspondientes
  ********************************************************/
-app.use("/api/aeropuertos", AeropuertoRoutes);
-app.use("/api/clientes", ClienteRoutes)
+app.use("/api/aeropuertos", aeropuertoRoutes);
+app.use("/api/clientes", clienteRoutes)
 
 // Ruta de prueba para la raíz
 app.get("/", (req, res) => {

@@ -1,10 +1,7 @@
 const express = require("express");
 const clienteController = require("../controllers/ClienteController");
-
 const router = express.Router();
 
-
-// Rutas ClienteController
 router.get("/", clienteController.getAllClientes.bind(clienteController));
 router.get("/:id", clienteController.getClienteById.bind(clienteController));
 router.post("/", clienteController.createCliente.bind(clienteController));
