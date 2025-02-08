@@ -8,7 +8,7 @@ router.post("/", clienteController.createCliente);
 router.post("/login", clienteController.loginCliente);
 router.put("/:id", clienteController.updateCliente);
 router.delete("/:id", clienteController.deleteCliente);
-router.get('/enviar-correo', clienteController.enviarCorreoACliente);
+router.post('/enviar-correo', clienteController.enviarCorreoACliente);
 
 module.exports = router;
 

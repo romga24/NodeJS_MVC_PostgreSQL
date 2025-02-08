@@ -37,12 +37,10 @@ exports.createCliente = (req, res) => {
 };
 
 exports.loginCliente = (req, res) => {
-  const { usuarioOEmail, contraseña } = req.body;
-  
+  const { usuarioOEmail, contraseña } = req.body;  
   if (!usuarioOEmail || !contraseña) {
     return res.status(400).json({ message: "Usuario/Email y contraseña son requeridos" });
   }
-
   clienteModel.login(usuarioOEmail, contraseña, (err, response) => {
     if (err) return res.status(500).json({ error: "Error al intentar iniciar sesión", details: err.message });
     if (!response) return res.status(401).json({ message: "Credenciales incorrectas" });
@@ -76,7 +74,7 @@ exports.deleteCliente = (req, res) => {
 
 // Enviar correo bonito (HTML) a un cliente
 exports.enviarCorreoACliente = (req, res) => {
-  const { email, asunto, mensaje } = req.query;
+  const { email, asunto, mensaje } = req.body;
 
   // Verificar que se reciban los parámetros necesarios
   if (!email || !asunto || !mensaje) {
