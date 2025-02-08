@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const aeropuertoController = require("../controllers/aeropuertoController"); // Importando el controlador
+const aeropuertoController = require("../controllers/AeropuertoController");
 
-// Rutas
-router.get("/", aeropuertoController.getAllAeropuertos);       // Obtener todos los aeropuertos
-router.get("/:id", aeropuertoController.getAeropuertoById);    // Obtener un aeropuerto por ID
-router.post("/", aeropuertoController.createAeropuerto);       // Crear un nuevo aeropuerto
-router.put("/:id", aeropuertoController.updateAeropuerto);    // Actualizar un aeropuerto por ID
-router.delete("/:id", aeropuertoController.deleteAeropuerto); // Eliminar un aeropuerto por ID
+// Rutas AeropuertoController
+router.get("/", aeropuertoController.getAllAeropuertos.bind(aeropuertoController));       
+router.get("/:id", aeropuertoController.getAeropuertoById.bind(aeropuertoController));   
+router.post("/", aeropuertoController.createAeropuerto.bind(aeropuertoController));     
+router.put("/:id", aeropuertoController.updateAeropuerto.bind(aeropuertoController));    
+router.delete("/:id", aeropuertoController.deleteAeropuerto.bind(aeropuertoController));  
 
-module.exports = router; // Exportando el router para usarlo en el archivo principal
+module.exports = router; 

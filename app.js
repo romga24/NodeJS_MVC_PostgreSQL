@@ -2,16 +2,25 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
+
 dotenv.config();
-const aeropuertoRoutes = require("./routes/aeropuertoRoutes");
+
+/*********************************************************
+ * Rutas donde estan definidos los controladores
+ ********************************************************/
+const AeropuertoRoutes = require("./routes/AeropuertoRoutes");
+const ClienteRoutes = require("./routes/ClienteRoutes");
+
 
 // Middleware para parsear JSON
 app.use(express.json());
-
 app.use(cors());
 
-// Usar las rutas de aeropuerto
-app.use("/api/aeropuertos", aeropuertoRoutes);
+/*********************************************************
+ * Rutas para definir las APIs correspondientes
+ ********************************************************/
+app.use("/api/aeropuertos", AeropuertoRoutes);
+app.use("/api/clientes", ClienteRoutes)
 
 // Ruta de prueba para la raíz
 app.get("/", (req, res) => {

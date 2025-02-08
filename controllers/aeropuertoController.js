@@ -1,5 +1,5 @@
 // controllers/aeropuertoController.js
-const Aeropuerto = require("../models/aeropuertoModel");
+const Aeropuerto = require("../models/AeropuertoModel");
 
 exports.getAllAeropuertos = (req, res) => {
   Aeropuerto.getAll((err, results) => {
