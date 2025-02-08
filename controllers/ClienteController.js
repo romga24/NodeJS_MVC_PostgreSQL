@@ -1,24 +1,27 @@
-// controllers/ClienteController.js
-const clienteModel = require("../models/ClienteModel");
+const clienteModel = require("../models/ClienteModel"); // Asegúrate de importar correctamente el modelo.
+const emailService = require("../config/nodemailerConfig"); // Asegúrate de tener un servicio para el envío de correos
 
 class ClienteController {
   
+  // Obtener todos los clientes
   getAllClientes(req, res) {
-    Cliente.getAll((err, results) => {
+    clienteModel.getAll((err, results) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       res.status(200).json(results);
     });
   }
 
+  // Obtener un cliente por ID
   getClienteById(req, res) {
     const { id } = req.params;
-    Cliente.getById(id, (err, result) => {
+    clienteModel.getById(id, (err, result) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       if (!result.length) return res.status(404).json({ message: "Cliente no encontrado" });
       res.status(200).json(result[0]);
     });
   }
 
+  // Crear un nuevo cliente
   createCliente(req, res) {
     const { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario } = req.body;
 
@@ -28,29 +31,31 @@ class ClienteController {
 
     const data = { nombre, apellidos, email, telefono, nif, contraseña, es_admin: false, nombre_usuario };
 
-    Cliente.create(data, (err, result) => {
+    clienteModel.create(data, (err, result) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       res.status(201).json({ message: "Cliente creado con éxito", id: result.insertId });
     });
   }
 
+  // Login de cliente
   loginCliente(req, res) {
     const { usuarioOEmail, contraseña } = req.body;
     if (!usuarioOEmail || !contraseña) {
       return res.status(400).json({ message: "Usuario/Email y contraseña son requeridos" });
     }
 
-    Cliente.login(usuarioOEmail, contraseña, (err, response) => {
+    clienteModel.login(usuarioOEmail, contraseña, (err, response) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       res.status(200).json(response);
     });
   }
 
+  // Actualizar un cliente
   updateCliente(req, res) {
     const { id } = req.params;
     const data = req.body;
 
-    Cliente.update(id, data, (err, result) => {
+    clienteModel.update(id, data, (err, result) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente no encontrado" });
 
@@ -58,10 +63,11 @@ class ClienteController {
     });
   }
 
+  // Eliminar un cliente
   deleteCliente(req, res) {
     const { id } = req.params;
 
-    Cliente.delete(id, (err, result) => {
+    clienteModel.delete(id, (err, result) => {  // Cambié Cliente por clienteModel
       if (err) return res.status(500).json({ error: err.message });
       if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente no encontrado" });
 
