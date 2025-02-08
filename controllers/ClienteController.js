@@ -81,21 +81,8 @@ exports.enviarCorreoACliente = (req, res) => {
     return res.status(400).json({ message: "El correo, asunto y mensaje son requeridos" });
   }
 
-  // Crear el cuerpo del correo en formato HTML
-  const htmlBody = `
-    <html>
-      <body>
-        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-          <h2 style="color: #333;">${asunto}</h2>
-          <p style="color: #555;">${mensaje}</p>
-          <p style="color: #777; font-size: 12px;">Este es un correo generado automáticamente. Si no deseas recibir más correos, por favor ignóralo.</p>
-        </div>
-      </body>
-    </html>
-  `;
-
   // Enviar el correo usando el servicio de nodemailer
-  emailService.sendEmail(email, asunto, htmlBody)
+  emailService.sendEmail(email, asunto, mensaje)
     .then((info) => {
       res.status(200).json({ message: "Correo enviado con éxito", info: info });
     })
