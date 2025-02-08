@@ -32,7 +32,7 @@ exports.createCliente = (req, res) => {
 
   clienteModel.create(data, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al crear el cliente", details: err.message });
-    res.status(201).json({ message: "Cliente creado con éxito", id: result.insertId });
+    res.status(200).json({ message: "Cliente creado con éxito", id: result.insertId });
   });
 };
 
