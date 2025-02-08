@@ -12,14 +12,25 @@ const Cliente = {
   },
 
   create: (data, callback) => {
-    bcrypt.hash(data.password, 10, (err, hash) => {
+    // Encriptar la contraseña antes de insertar en la base de datos
+    bcrypt.hash(data.contraseña, 10, (err, hash) => {
       if (err) return callback(err);
+
+      // Reemplazamos la contraseña en los datos con el hash
       data.password = hash;
-      db.query("INSERT INTO t_clientes (nombre, apellidos, email, telefono, nif, contraseña, es_admin, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id_cliente", 
-        [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.password, data.es_admin, data.nombre_usuario], 
+
+      // Inserción de los datos del cliente en la base de datos (PostgreSQL)
+      db.query(
+        "INSERT INTO t_clientes (nombre, apellidos, email, telefono, nif, contraseña, es_admin, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", 
+        [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.password, data.es_admin, data.nombre_usuario],
         (err, result) => {
-          if (err) return callback(err);
-          callback(null, result.rows[0]);
+          if (err) {
+            // Si hubo un error, devolvemos false
+            return callback(null, false);
+          }
+
+          // Si la inserción es exitosa, devolvemos true
+          callback(null, true);
         }
       );
     });
