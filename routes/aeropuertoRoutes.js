@@ -9,7 +9,5 @@ router.post("/", aeropuertoController.createAeropuerto);
 router.put("/:id", aeropuertoController.updateAeropuerto);    
 router.delete("/:id", aeropuertoController.deleteAeropuerto);  
 
-module.exports = {
-    router
-};
+module.exports = router;
 
