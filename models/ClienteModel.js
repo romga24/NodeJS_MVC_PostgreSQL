@@ -8,29 +8,35 @@ const Cliente = {
   },
 
   getById: (id, callback) => {
-    db.query("SELECT * FROM t_clientes WHERE id_cliente = ?", [id], callback);
+    db.query("SELECT * FROM t_clientes WHERE id_cliente = $1", [id], callback);  // Updated for PostgreSQL
   },
 
   create: (data, callback) => {
     bcrypt.hash(data.password, 10, (err, hash) => {
       if (err) return callback(err);
       data.password = hash;
-      db.query("INSERT INTO t_clientes SET ?", data, callback);
+      db.query("INSERT INTO t_clientes (nombre, apellidos, email, telefono, nif, contraseña, es_admin, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id_cliente", 
+        [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.password, data.es_admin, data.nombre_usuario], 
+        (err, result) => {
+          if (err) return callback(err);
+          callback(null, result.rows[0]);
+        }
+      );
     });
   },
 
   login: (usuarioOEmail, password, callback) => {
     db.query(
-      "SELECT * FROM t_clientes WHERE nombre_usuario = ? OR email = ?", 
-      [usuarioOEmail, usuarioOEmail], 
+      "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1",  // Updated for PostgreSQL
+      [usuarioOEmail], 
       (err, results) => {
         if (err) return callback(err);
-        if (results.length === 0) return callback(null, null);
+        if (results.rows.length === 0) return callback(null, null);
         
-        bcrypt.compare(password, results[0].password, (err, isMatch) => {
+        bcrypt.compare(password, results.rows[0].contraseña, (err, isMatch) => {
           if (err) return callback(err);
           if (!isMatch) return callback(null, null);
-          callback(null, results[0]);
+          callback(null, results.rows[0]);
         });
       }
     );
@@ -41,15 +47,21 @@ const Cliente = {
       bcrypt.hash(data.password, 10, (err, hash) => {
         if (err) return callback(err);
         data.password = hash;
-        db.query("UPDATE t_clientes SET ? WHERE id_cliente = ?", [data, id], callback);
+        db.query("UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, contraseña = $6, es_admin = $7, nombre_usuario = $8 WHERE id_cliente = $9", 
+          [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.password, data.es_admin, data.nombre_usuario, id], 
+          callback
+        );
       });
     } else {
-      db.query("UPDATE t_clientes SET ? WHERE id_cliente = ?", [data, id], callback);
+      db.query("UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, es_admin = $6, nombre_usuario = $7 WHERE id_cliente = $8", 
+        [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.es_admin, data.nombre_usuario, id], 
+        callback
+      );
     }
   },
 
   delete: (id, callback) => {
-    db.query("DELETE FROM t_clientes WHERE id_cliente = ?", [id], callback);
+    db.query("DELETE FROM t_clientes WHERE id_cliente = $1", [id], callback);  // Updated for PostgreSQL
   },
 };
 
