@@ -8,7 +8,7 @@ const Aeropuerto = {
   },
 
   getById: (id, callback) => {
-    db.query("SELECT * FROM t_aeropuertos WHERE id_aeropuerto = ?", [id], callback);
+    db.query("SELECT * FROM t_aeropuertos WHERE id_aeropuerto = $1", [id], callback);
   },
 
   create: (data, callback) => {

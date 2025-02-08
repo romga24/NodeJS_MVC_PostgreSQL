@@ -15,7 +15,7 @@ exports.getClienteById = (req, res) => {
   clienteModel.getById(id, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al obtener el cliente", details: err.message });
     if (!result.length) return res.status(404).json({ message: "Cliente no encontrado" });
-    res.status(200).json(result[0]);
+    res.status(200).json(result);
   });
 };
 
