@@ -11,6 +11,7 @@ router.put("/:id", clienteController.updateCliente);
 router.delete("/:id", clienteController.deleteCliente); 
 router.post('/enviar-correo', clienteController.enviarCorreoACliente);
 
-module.exports = router;
-
+module.exports = {
+    router
+};
 
