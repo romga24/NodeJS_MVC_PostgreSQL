@@ -49,7 +49,7 @@ exports.loginCliente = (req, res) => {
 exports.updateCliente = (req, res) => {
   const { id } = req.params;
   const { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario, es_admin } = req.body;
-  let datosCliente = { nombre, apellidos, email, telefono, nif, nombre_usuario, es_admin };
+  let datosCliente = { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario, es_admin };
 
   clienteModel.update(id, datosCliente, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al actualizar el cliente", details: err.message });
