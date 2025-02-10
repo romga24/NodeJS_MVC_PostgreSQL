@@ -8,11 +8,11 @@ const Cliente = {
   },
 
   getById: (id, callback) => {
-    db.query("SELECT * FROM t_clientes WHERE id_cliente = $1", [id], callback);  // Updated for PostgreSQL
+    db.query("SELECT * FROM t_clientes WHERE id_cliente = $1", [id], callback); 
   },
 
+
   create: (data, callback) => {
-    // Encriptar la contraseña antes de insertar en la base de datos
     bcrypt.hash(data.contraseña, 10, (err, hash) => {
       if (err) return callback(err);
 
@@ -34,12 +34,19 @@ const Cliente = {
   },
 
   login: (usuarioOEmail, password, callback) => {
+    
     const query = "SELECT * FROM t_clientes WHERE nombre_usuario = $1 OR email = $1";
-    db.query(query, [usuarioOEmail], (err, results) => {
-        if (err)  return callback(err);
-        if (results.rows.length === 0) return callback(null, false);  
+    
+    db.query(query, [usuarioOEmail], async (err, results) => {
+        if (err) return callback(err);
+        
+        if (results.rows.length === 0) return callback(null, false);
+
         const usuario = results.rows[0];
-        if (password === usuario.contraseña) return callback(null, true); 
+
+        const isMatch = await bcrypt.compare(password, usuario.contraseña);
+        
+        if (isMatch) return callback(null, usuario);  
         else return callback(null, false); 
     });
 },
@@ -47,21 +54,24 @@ const Cliente = {
 
   update: (id, data, callback) => {
     if (data.password) {
+      // Encriptar la contraseña nueva
       bcrypt.hash(data.password, 10, (err, hash) => {
-        if (err) return callback(err);
-        data.password = hash;
-        db.query("UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, contraseña = $6, es_admin = $7, nombre_usuario = $8 WHERE id_cliente = $9", 
-          [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.password, data.es_admin, data.nombre_usuario, id], 
-          callback
-        );
+        if (err) return callback(err); 
+
+        data.contraseña = hash;
+
+        const query = "UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, contraseña = $6, es_admin = $7, nombre_usuario = $8 WHERE id_cliente = $9";
+        const values = [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.contraseña, data.es_admin, data.nombre_usuario];
+
+        db.query(query, values, callback);
       });
     } else {
-      db.query("UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, es_admin = $6, nombre_usuario = $7 WHERE id_cliente = $8", 
-        [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.es_admin, data.nombre_usuario, id], 
-        callback
-      );
+      const query = "UPDATE t_clientes SET nombre = $1, apellidos = $2, email = $3, telefono = $4, nif = $5, es_admin = $6, nombre_usuario = $7 WHERE id_cliente = $8";
+      const values = [data.nombre, data.apellidos, data.email, data.telefono, data.nif, data.es_admin, data.nombre_usuario];
+
+      db.query(query, values, callback);
     }
-  },
+},
 
   delete: (id, callback) => {
     db.query("DELETE FROM t_clientes WHERE id_cliente = $1", [id], callback);  // Updated for PostgreSQL

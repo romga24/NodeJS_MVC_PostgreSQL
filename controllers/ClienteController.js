@@ -19,11 +19,9 @@ exports.getClienteById = (req, res) => {
   });
 };
 
-// Crear un nuevo cliente
 exports.createCliente = (req, res) => {
   const { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario } = req.body;
 
-  // Validación de los campos obligatorios
   if (!nombre || !apellidos || !email || !telefono || !nif || !contraseña || !nombre_usuario) {
     return res.status(400).json({ message: "Todos los campos son obligatorios" });
   }
@@ -48,12 +46,12 @@ exports.loginCliente = (req, res) => {
   });
 };
 
-// Actualizar un cliente
 exports.updateCliente = (req, res) => {
   const { id } = req.params;
-  const data = req.body;
+  const { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario, es_admin } = req.body;
+  let datosCliente = { nombre, apellidos, email, telefono, nif, nombre_usuario, es_admin };
 
-  clienteModel.update(id, data, (err, result) => {
+  clienteModel.update(id, datosCliente, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al actualizar el cliente", details: err.message });
     if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente no encontrado" });
 
@@ -72,16 +70,14 @@ exports.deleteCliente = (req, res) => {
   });
 };
 
-// Enviar correo bonito (HTML) a un cliente
+
 exports.enviarCorreoACliente = (req, res) => {
   const { email, asunto, mensaje } = req.body;
 
-  // Verificar que se reciban los parámetros necesarios
   if (!email || !asunto || !mensaje) {
     return res.status(400).json({ message: "El correo, asunto y mensaje son requeridos" });
   }
 
-  // Enviar el correo usando el servicio de nodemailer
   emailService.sendEmail(email, asunto, mensaje)
     .then((info) => {
       res.status(200).json({ message: "Correo enviado con éxito", info: info });
