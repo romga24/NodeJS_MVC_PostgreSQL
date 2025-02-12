@@ -1,4 +1,6 @@
 const VueloModel = require("../models/VueloModel"); // Importa el modelo de vuelos
+const amadeus = require('../config/amadeusConfig');
+
 
 // Obtener todos los vuelos
 exports.getAllVuelos = (req, res) => {
@@ -61,15 +63,44 @@ exports.deleteVuelo = (req, res) => {
 };
 
 // Buscar vuelos en un intervalo de fechas y por destino
-exports.searchVuelos = (req, res) => {
-  const { fecha_inicio, fecha_fin, destino } = req.query;
+exports.searchVuelos = async (req, res) => {
+  const { fecha_inicio, fecha_fin, destino, origen } = req.query;
 
-  if (!fecha_inicio || !fecha_fin || !destino) {
-    return res.status(400).json({ message: "Se requieren fecha_inicio, fecha_fin y destino para la búsqueda" });
+  // Validar parámetros requeridos
+  if (!fecha_inicio || !fecha_fin || !destino || !origen) {
+    return res.status(400).json({
+      message: "Se requieren fecha_inicio, fecha_fin, origen y destino para la búsqueda",
+    });
   }
 
-  VueloModel.search(fecha_inicio, fecha_fin, destino, (err, vuelos) => {
-    if (err) return res.status(500).json({ error: "Error al buscar los vuelos", details: err.message });
+  try {
+    // Realizar la búsqueda de vuelos con la API de Amadeus
+    const response = await amadeus.shopping.flightOffersSearch.get({
+      originLocationCode: origen,
+      destinationLocationCode: destino,
+      departureDate: fecha_inicio,
+      returnDate: fecha_fin,
+      adults: '1', // Puedes agregar más parámetros según tus necesidades
+    });
+
+    // Extraer los datos de los vuelos
+    const vuelos = response.data.map((vuelo) => ({
+      id: vuelo.id,
+      precio: vuelo.price.total,
+      origen: vuelo.itineraries[0].segments[0].departure.iataCode,
+      destino: vuelo.itineraries[0].segments.slice(-1)[0].arrival.iataCode,
+      fechaSalida: vuelo.itineraries[0].segments[0].departure.at,
+      fechaLlegada: vuelo.itineraries[0].segments.slice(-1)[0].arrival.at,
+      aerolinea: vuelo.itineraries[0].segments[0].carrierCode,
+    }));
+
+    // Devolver los vuelos encontrados
     res.status(200).json(vuelos);
-  });
+  } catch (error) {
+    console.error('Error al buscar vuelos:', error);
+    res.status(500).json({
+      error: "Error al buscar los vuelos",
+      details: error.response ? error.response.data : error.message,
+    });
+  }
 };

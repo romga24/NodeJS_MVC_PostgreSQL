@@ -1,7 +1,20 @@
+/*********************************************************
+ * Servicio de envío de correos electrónicos con Nodemailer
+ *
+ * Este módulo utiliza la librería 'nodemailer' para enviar correos 
+ * electrónicos a través de una cuenta de Gmail. Las credenciales 
+ * de autenticación se configuran mediante variables de entorno 
+ * (EMAIL_USER y EMAIL_PASS).
+ *
+ * Funcionalidad principal:
+ * - Configura un transporte SMTP con Gmail.
+ * - Permite enviar correos especificando destinatario, asunto y mensaje.
+ *
+ *********************************************************/
+
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Crear el transporte de Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail', 
   auth: {
@@ -10,13 +23,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Función para enviar un correo
 const sendEmail = (to, subject, text) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,  // Correo de quien envía
-    to: to,                        // Correo del destinatario
-    subject: subject,              // Asunto
-    text: text                     // Cuerpo del mensaje
+    from: process.env.EMAIL_USER,  
+    to: to,                        
+    subject: subject,              
+    text: text                     
   };
 
   return transporter.sendMail(mailOptions);
