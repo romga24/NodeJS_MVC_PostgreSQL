@@ -80,14 +80,19 @@ exports.buscarVuelos = async (req, res) => {
           originLocationCode: origen,          // Código IATA del aeropuerto de origen
           destinationLocationCode: destino,    // Código IATA del aeropuerto de destino
           departureDate: salida,               // Fecha de salida
-          returnDate: regreso || null,         // Fecha de regreso (si no existe, se pasa como null)
           adults,                              // Número de adultos
           travelClass: clase || "ECONOMY",     // Clase de viaje (por defecto es "ECONOMY")
           nonStop: escalas === "true",         // Filtra vuelos sin escalas (booleano)
           max: 50,                             // Número máximo de resultados a obtener
       };
 
+      // Si el parámetro 'regreso' es proporcionado, lo agregamos a los parámetros
+      if (regreso) {
+          params.returnDate = regreso;
+      }
+
       // Verificamos si el token existe antes de hacer la solicitud
+      const accessToken = obtenerAccessToken(); // Asegúrate de que esta función obtenga correctamente el token
       if (!accessToken) {
           return res.status(400).json({ error: "El token de acceso no está disponible" });
       }
@@ -101,13 +106,18 @@ exports.buscarVuelos = async (req, res) => {
           },
       });
 
+      // Verificamos el estado de la respuesta
+      if (response.status !== 200) {
+          return res.status(500).json({ error: "Error con la API de Amadeus", details: response.data });
+      }
+
       // Limpiamos los datos de vuelos para dar la respuesta deseada
       const vuelos = limpiarDatosVuelos(response.data.data);
       res.json(vuelos);  // Enviamos la respuesta con los vuelos
   } catch (error) {
       // En caso de error, manejamos la excepción
       console.error("❌ Error buscando vuelos:", error.response?.data || error.message);
-      res.status(500).json({ error: "Error buscando vuelos" });
+      res.status(500).json({ error: "Error buscando vuelos", details: error.response?.data || error.message });
   }
 };
 
@@ -124,6 +134,8 @@ exports.limpiarDatosVuelos = (data) => {
               salida: segmento.departure.at,        // Hora de salida
               llegada: segmento.arrival.at,         // Hora de llegada
               vuelo: segmento.carrierCode + segmento.number,  // Número de vuelo
+              avion: segmento.aircraft?.code || "Desconocido", // Verificamos si hay código de avión
+              terminal: segmento.departure?.terminal || "Desconocido", // Verificamos si hay terminal
           })),
       })),
   }));
