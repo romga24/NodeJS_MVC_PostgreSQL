@@ -1,6 +1,7 @@
-const VueloModel = require("../models/VueloModel"); // Importa el modelo de vuelos
-const { searchFlights } = require("../config/amadeusConfig");
+const VueloModel = require("../models/VueloModel"); 
+const { accessToken } = require("../config/amadeusConfig");
 const axios = require("axios");
+const AMADEUS_FLIGHT_API = "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
 // Obtener todos los vuelos
 exports.getAllVuelos = (req, res) => {
@@ -62,31 +63,51 @@ exports.deleteVuelo = (req, res) => {
   });
 };
 
-exports.getFlightsByPrice = async (req, res) => {
-  const { origin, destination, date, maxPrice } = req.query;
+exports.buscarVuelos = async (req, res) => {
+    try {
+        const { origen, destino, salida, regreso, adultos, clase, escalas } = req.query;
 
-  if (!origin || !destination || !date || !maxPrice) {
-    return res.status(400).json({ error: "Faltan parámetros: origin, destination, date, maxPrice" });
-  }
+        if (!origen || !destino || !salida || !adultos) {
+            return res.status(400).json({ error: "Faltan parámetros obligatorios" });
+        }
 
-  const flights = await searchFlights(origin, destination, date, maxPrice);
+        const params = {
+            originLocationCode: origen,
+            destinationLocationCode: destino,
+            departureDate: salida,
+            returnDate: regreso || null,
+            adults,
+            travelClass: clase || "ECONOMY",
+            nonStop: escalas === "true",
+            max: 50,
+        };
 
-  if (!flights) {
-    return res.status(500).json({ error: "Error al obtener los vuelos" });
-  }
+        const response = await axios.get(AMADEUS_FLIGHT_API, {
+            params,
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
-  // Formatear la respuesta con aerolínea, precio y horarios
-  const formattedFlights = flights.map((flight) => ({
-    aerolinea: flight.validatingAirlineCodes[0],
-    precio: flight.price.total,
-    moneda: flight.price.currency,
-    itinerario: flight.itineraries.map((itinerary) => ({
-      salida: itinerary.segments[0].departure.iataCode,
-      llegada: itinerary.segments[itinerary.segments.length - 1].arrival.iataCode,
-      horaSalida: itinerary.segments[0].departure.at,
-      horaLlegada: itinerary.segments[itinerary.segments.length - 1].arrival.at,
-    })),
-  }));
+        const vuelos = limpiarDatosVuelos(response.data.data);
+        res.json(vuelos);
+    } catch (error) {
+        console.error("❌ Error buscando vuelos:", error.response?.data || error.message);
+        res.status(500).json({ error: "Error buscando vuelos" });
+    }
+};
 
-  res.json({ vuelos: formattedFlights });
+exports.limpiarDatosVuelos = (data) => {
+    return data.map((vuelo) => ({
+        aerolinea: vuelo.validatingAirlineCodes[0],
+        precio: vuelo.price.grandTotal + " " + vuelo.price.currency,
+        itinerarios: vuelo.itineraries.map((itinerario) => ({
+            duracion: itinerario.duration,
+            segmentos: itinerario.segments.map((segmento) => ({
+                origen: segmento.departure.iataCode,
+                destino: segmento.arrival.iataCode,
+                salida: segmento.departure.at,
+                llegada: segmento.arrival.at,
+                vuelo: segmento.carrierCode + segmento.number,
+            })),
+        })),
+    }));
 };

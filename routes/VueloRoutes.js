@@ -7,6 +7,6 @@ router.get("/:id", vueloController.getVueloById);
 router.post("/", vueloController.createVuelo);
 router.put("/:id", vueloController.updateVuelo);
 router.delete("/:id", vueloController.deleteVuelo);
-router.get("/search", vueloController.getFlightsByPrice);
+router.get("/vuelos", buscarVuelos);
 
 module.exports = router;
