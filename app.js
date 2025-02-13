@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const aeropuertoRoutes = require("./routes/AeropuertoRoutes");
 const clienteRoutes = require("./routes/ClienteRoutes");
+const vuelosRoutes = require("./routes/VueloRoutes")
+
 
 const app = express();
 
@@ -12,7 +14,7 @@ app.use(cors());
 // Configura las rutas
 app.use("/api/aeropuertos", aeropuertoRoutes);
 app.use("/api/clientes", clienteRoutes);
-app.use("/api/vuelos", clienteRoutes);
+app.use("/api/vuelos", vuelosRoutes);
 
 
 
