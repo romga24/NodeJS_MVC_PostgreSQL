@@ -1,27 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require('body-parser');
-
-
-const aeropuertoRoutes = require("./routes/AeropuertoRoutes");
-const clienteRoutes = require("./routes/ClienteRoutes");
-const vuelosRoutes = require("./routes/VueloRoutes")
-
-
-
+// No es necesario importar body-parser si ya usas express.json()
 const app = express();
 
 // Middleware para parsear JSON
-app.use(express.json());
-app.use(bodyParser.json());
+app.use(express.json()); // Usamos solo express.json()
+
 app.use(cors());
 
 // Configura las rutas
 app.use("/api/aeropuertos", aeropuertoRoutes);
 app.use("/api/clientes", clienteRoutes);
 app.use("/api/vuelos", vuelosRoutes);
-
-
 
 // Ruta de prueba
 app.get("/", (req, res) => {
@@ -33,6 +23,5 @@ const port = process.env.PORT || 3003;
 app.listen(port, "0.0.0.0", () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
 });
-
 
 
