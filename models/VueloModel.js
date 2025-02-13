@@ -20,9 +20,8 @@ const VueloModel = {
         return callback(err, null);
       }
       callback(null, result.rows);
-    });
-  }
-};
+    })
+  },
 
   // Obtener un vuelo por ID
   getById: (id, callback) => {
