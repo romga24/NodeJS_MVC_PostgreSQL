@@ -68,7 +68,7 @@ exports.getVuelosConFiltro = (req, res) => {
     return res.status(400).json({ error: "Faltan parámetros obligatorios" });
   }
 
-  VueloModel.getVuelosConFiltro(idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros, (err, result) => {
+  VueloModel.getVuelosConPrecios(idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al obtener los vuelos", details: err.message });
 
     res.status(200).json(result);

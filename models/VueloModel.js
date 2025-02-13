@@ -9,12 +9,20 @@ const VueloModel = {
              a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
              al.nombre AS aerolinea
       FROM t_vuelos v
-      JOIN t_aeropuertos a_origen ON v.id_aeropuerto_origen = a_origen.id_aeropuerto
-      JOIN t_aeropuertos a_destino ON v.id_aeropuerto_destino = a_destino.id_aeropuerto
-      JOIN t_aerolineas al ON v.id_aerolinea = al.id_aerolinea;
+      INNER JOIN t_aeropuertos a_origen ON v.id_aeropuerto_origen = a_origen.id_aeropuerto
+      INNER JOIN t_aeropuertos a_destino ON v.id_aeropuerto_destino = a_destino.id_aeropuerto
+      INNER JOIN t_aerolineas al ON v.id_aerolinea = al.id_aerolinea;
     `;
-    db.query(sql, callback);
-  },
+
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error('Error ejecutando la consulta:', err);
+        return callback(err, null);
+      }
+      callback(null, result.rows);
+    });
+  }
+};
 
   // Obtener un vuelo por ID
   getById: (id, callback) => {
