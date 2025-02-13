@@ -1,7 +1,4 @@
 const VueloModel = require("../models/VueloModel"); 
-const { accessToken } = require("../config/amadeusConfig");
-const axios = require("axios");
-const AMADEUS_FLIGHT_API = "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
 // Obtener todos los vuelos
 exports.getAllVuelos = (req, res) => {
@@ -63,80 +60,21 @@ exports.deleteVuelo = (req, res) => {
   });
 };
 
+exports.getVuelosConFiltro = (req, res) => {
+  const { idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros } = req.body;
 
-// La función que maneja la búsqueda de vuelos
-exports.buscarVuelos = async (req, res) => {
-  try {
-      // Obtenemos los parámetros de la solicitud
-      const { origen, destino, salida, regreso, adultos, clase, escalas } = req.query;
-
-      // Verificamos si los parámetros obligatorios están presentes
-      if (!origen || !destino || !salida || !adultos) {
-          return res.status(400).json({ error: "Faltan parámetros obligatorios" });
-      }
-
-      // Definimos los parámetros que se enviarán en la solicitud a la API
-      const params = {
-          originLocationCode: origen,          // Código IATA del aeropuerto de origen
-          destinationLocationCode: destino,    // Código IATA del aeropuerto de destino
-          departureDate: salida,               // Fecha de salida
-          adults,                              // Número de adultos
-          travelClass: clase || "ECONOMY",     // Clase de viaje (por defecto es "ECONOMY")
-          nonStop: escalas === "true",         // Filtra vuelos sin escalas (booleano)
-          max: 50,                             // Número máximo de resultados a obtener
-      };
-
-      // Si el parámetro 'regreso' es proporcionado, lo agregamos a los parámetros
-      if (regreso) {
-          params.returnDate = regreso;
-      }
-
-      // Verificamos si el token existe antes de hacer la solicitud
-      const accessToken = obtenerAccessToken(); // Asegúrate de que esta función obtenga correctamente el token
-      if (!accessToken) {
-          return res.status(400).json({ error: "El token de acceso no está disponible" });
-      }
-
-      // Realizamos la solicitud GET a la API de Amadeus
-      const response = await axios.get(AMADEUS_FLIGHT_API, {
-          params,
-          headers: {
-              Authorization: `Bearer ${accessToken}`,  // Usamos el token de acceso dinámico
-              Accept: "application/vnd.amadeus+json",   // Aceptamos la respuesta en formato JSON
-          },
-      });
-
-      // Verificamos el estado de la respuesta
-      if (response.status !== 200) {
-          return res.status(500).json({ error: "Error con la API de Amadeus", details: response.data });
-      }
-
-      // Limpiamos los datos de vuelos para dar la respuesta deseada
-      const vuelos = limpiarDatosVuelos(response.data.data);
-      res.json(vuelos);  // Enviamos la respuesta con los vuelos
-  } catch (error) {
-      // En caso de error, manejamos la excepción
-      console.error("❌ Error buscando vuelos:", error.response?.data || error.message);
-      res.status(500).json({ error: "Error buscando vuelos", details: error.response?.data || error.message });
+  // Verificar que los parámetros requeridos estén presentes
+  if (!idOrigen || !idDestino || !fechaIda || !pasajeros) {
+    return res.status(400).json({ error: "Faltan parámetros obligatorios" });
   }
+
+  VueloModel.getVuelosConFiltro(idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros, (err, result) => {
+    if (err) return res.status(500).json({ error: "Error al obtener los vuelos", details: err.message });
+
+    res.status(200).json(result);
+  });
 };
 
-// Función que limpia y formatea los datos de los vuelos
-exports.limpiarDatosVuelos = (data) => {
-  return data.map((vuelo) => ({
-      aerolinea: vuelo.validatingAirlineCodes[0],  // Código de la aerolínea
-      precio: vuelo.price.grandTotal + " " + vuelo.price.currency,  // Precio total y su moneda
-      itinerarios: vuelo.itineraries.map((itinerario) => ({
-          duracion: itinerario.duration,  // Duración del itinerario
-          segmentos: itinerario.segments.map((segmento) => ({
-              origen: segmento.departure.iataCode,  // Código IATA del origen
-              destino: segmento.arrival.iataCode,   // Código IATA del destino
-              salida: segmento.departure.at,        // Hora de salida
-              llegada: segmento.arrival.at,         // Hora de llegada
-              vuelo: segmento.carrierCode + segmento.number,  // Número de vuelo
-              avion: segmento.aircraft?.code || "Desconocido", // Verificamos si hay código de avión
-              terminal: segmento.departure?.terminal || "Desconocido", // Verificamos si hay terminal
-          })),
-      })),
-  }));
-};
+
+
+

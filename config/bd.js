@@ -1,4 +1,7 @@
-// config/db.js
+/*********************************************************
+ * Fichero de configuracion de la base de datos PostgreSQL 
+ * ******************************************************/
+
 const { Client } = require("pg");
 require("dotenv").config();
 
@@ -8,7 +11,7 @@ const client = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: false },  // 🔹 IMPORTANTE: Activar SSL para Render
+  ssl: { rejectUnauthorized: false },  // SSL para Render
 });
 
 client.connect((err) => {
@@ -16,7 +19,7 @@ client.connect((err) => {
     console.error("Error al conectar a la base de datos:", err);
     return;
   }
-  console.log("✅ Conectado a la base de datos PostgreSQL");
+  console.log("Conectado a la base de datos PostgreSQL");
 });
 
 module.exports = client;
