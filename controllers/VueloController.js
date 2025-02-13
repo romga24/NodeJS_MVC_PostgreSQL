@@ -1,6 +1,6 @@
 const VueloModel = require("../models/VueloModel"); // Importa el modelo de vuelos
 const { searchFlights } = require("../config/amadeusConfig");
-
+const axios = require("axios");
 
 // Obtener todos los vuelos
 exports.getAllVuelos = (req, res) => {
