@@ -5,7 +5,7 @@ const VueloModel = {
   getAll: (callback) => {
     const sql = `
       SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
-             v.precio AS precio_unitario,
+             v.precio_vuelo AS precio_unitario,
              a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
              al.nombre AS aerolinea
       FROM t_vuelos v
