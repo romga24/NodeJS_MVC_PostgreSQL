@@ -6,15 +6,17 @@ let accessToken = null;
 
 const getAccessToken = async () => {
     try {
-        const response = await axios.post(AMADEUS_API_URL, null, {
-            params: {
-                grant_type: "client_credentials",
-                client_id: process.env.AMADEUS_API_KEY,
-                client_secret: process.env.AMADEUS_API_SECRET,
-            },
-        });
+        const response = await axios.post(AMADEUS_API_URL, 
+            // Usamos "x-www-form-urlencoded" para enviar los parámetros
+            "grant_type=client_credentials&client_id=" + process.env.AMADEUS_API_KEY + "&client_secret=" + process.env.AMADEUS_API_SECRET, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                }
+            });
+
+        // Guardamos el token de acceso
         accessToken = response.data.access_token;
-        console.log("✅ Token obtenido correctamente");
+        console.log("✅ Token obtenido correctamente:", accessToken);
     } catch (error) {
         console.error("❌ Error obteniendo el token:", error.response?.data || error.message);
     }
@@ -27,3 +29,4 @@ getAccessToken();
 setInterval(getAccessToken, 30 * 60 * 1000);
 
 module.exports = { getAccessToken, accessToken };
+
