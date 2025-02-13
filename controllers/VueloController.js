@@ -66,60 +66,65 @@ exports.deleteVuelo = (req, res) => {
 
 // La función que maneja la búsqueda de vuelos
 exports.buscarVuelos = async (req, res) => {
-    try {
-        const { origen, destino, salida, regreso, adultos, clase, escalas } = req.query;
+  try {
+      // Obtenemos los parámetros de la solicitud
+      const { origen, destino, salida, regreso, adultos, clase, escalas } = req.query;
 
-        // Verificamos si los parámetros obligatorios están presentes
-        if (!origen || !destino || !salida || !adultos) {
-            return res.status(400).json({ error: "Faltan parámetros obligatorios" });
-        }
+      // Verificamos si los parámetros obligatorios están presentes
+      if (!origen || !destino || !salida || !adultos) {
+          return res.status(400).json({ error: "Faltan parámetros obligatorios" });
+      }
 
-        // Definimos los parámetros que se enviarán en la solicitud a la API
-        const params = {
-            originLocationCode: origen,
-            destinationLocationCode: destino,
-            departureDate: salida,
-            returnDate: regreso || null,
-            adults,
-            travelClass: clase || "ECONOMY",  // Si no se especifica, por defecto es "ECONOMY"
-            nonStop: escalas === "true",     // Convertimos el parámetro de escalas a booleano
-            max: 50,  // Número máximo de resultados
-        };
+      // Definimos los parámetros que se enviarán en la solicitud a la API
+      const params = {
+          originLocationCode: origen,          // Código IATA del aeropuerto de origen
+          destinationLocationCode: destino,    // Código IATA del aeropuerto de destino
+          departureDate: salida,               // Fecha de salida
+          returnDate: regreso || null,         // Fecha de regreso (si no existe, se pasa como null)
+          adults,                              // Número de adultos
+          travelClass: clase || "ECONOMY",     // Clase de viaje (por defecto es "ECONOMY")
+          nonStop: escalas === "true",         // Filtra vuelos sin escalas (booleano)
+          max: 50,                             // Número máximo de resultados a obtener
+      };
 
-        // Realizamos la solicitud GET a la API de Amadeus
-        const response = await axios.get(AMADEUS_FLIGHT_API, {
-            params,
-            headers: {
-                Authorization: `Bearer ${accessToken}`,  // Usamos el token de acceso
-                Accept: "application/vnd.amadeus+json",   // Aceptamos la respuesta en formato JSON
-            },
-        });
+      // Verificamos si el token existe antes de hacer la solicitud
+      if (!accessToken) {
+          return res.status(400).json({ error: "El token de acceso no está disponible" });
+      }
 
-        // Limpiamos los datos de vuelos para dar la respuesta deseada
-        const vuelos = limpiarDatosVuelos(response.data.data);
-        res.json(vuelos);  // Enviamos la respuesta con los vuelos
-    } catch (error) {
-        // En caso de error, manejamos la excepción
-        console.error("❌ Error buscando vuelos:", error.response?.data || error.message);
-        res.status(500).json({ error: "Error buscando vuelos" });
-    }
+      // Realizamos la solicitud GET a la API de Amadeus
+      const response = await axios.get(AMADEUS_FLIGHT_API, {
+          params,
+          headers: {
+              Authorization: `Bearer ${accessToken}`,  // Usamos el token de acceso dinámico
+              Accept: "application/vnd.amadeus+json",   // Aceptamos la respuesta en formato JSON
+          },
+      });
+
+      // Limpiamos los datos de vuelos para dar la respuesta deseada
+      const vuelos = limpiarDatosVuelos(response.data.data);
+      res.json(vuelos);  // Enviamos la respuesta con los vuelos
+  } catch (error) {
+      // En caso de error, manejamos la excepción
+      console.error("❌ Error buscando vuelos:", error.response?.data || error.message);
+      res.status(500).json({ error: "Error buscando vuelos" });
+  }
 };
 
 // Función que limpia y formatea los datos de los vuelos
 exports.limpiarDatosVuelos = (data) => {
-    return data.map((vuelo) => ({
-        aerolinea: vuelo.validatingAirlineCodes[0],  // Código de la aerolínea
-        precio: vuelo.price.grandTotal + " " + vuelo.price.currency,  // Precio total y su moneda
-        itinerarios: vuelo.itineraries.map((itinerario) => ({
-            duracion: itinerario.duration,  // Duración del itinerario
-            segmentos: itinerario.segments.map((segmento) => ({
-                origen: segmento.departure.iataCode,  // Código IATA del origen
-                destino: segmento.arrival.iataCode,   // Código IATA del destino
-                salida: segmento.departure.at,        // Hora de salida
-                llegada: segmento.arrival.at,         // Hora de llegada
-                vuelo: segmento.carrierCode + segmento.number,  // Número de vuelo
-            })),
-        })),
-    }));
+  return data.map((vuelo) => ({
+      aerolinea: vuelo.validatingAirlineCodes[0],  // Código de la aerolínea
+      precio: vuelo.price.grandTotal + " " + vuelo.price.currency,  // Precio total y su moneda
+      itinerarios: vuelo.itineraries.map((itinerario) => ({
+          duracion: itinerario.duration,  // Duración del itinerario
+          segmentos: itinerario.segments.map((segmento) => ({
+              origen: segmento.departure.iataCode,  // Código IATA del origen
+              destino: segmento.arrival.iataCode,   // Código IATA del destino
+              salida: segmento.departure.at,        // Hora de salida
+              llegada: segmento.arrival.at,         // Hora de llegada
+              vuelo: segmento.carrierCode + segmento.number,  // Número de vuelo
+          })),
+      })),
+  }));
 };
-
