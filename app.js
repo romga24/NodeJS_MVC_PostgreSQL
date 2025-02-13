@@ -8,7 +8,7 @@ const vuelosRoutes = require("./routes/VueloRoutes")
 const app = express();
 
 // Middleware para parsear JSON
-app.use(express.json());
+app.use(bodyParser.json()); 
 app.use(cors());
 
 // Configura las rutas
