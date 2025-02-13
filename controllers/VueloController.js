@@ -1,5 +1,5 @@
 const VueloModel = require("../models/VueloModel"); // Importa el modelo de vuelos
-const amadeus = require('../config/amadeusConfig');
+const { searchFlights } = require("../config/amadeusConfig");
 
 
 // Obtener todos los vuelos
@@ -62,68 +62,31 @@ exports.deleteVuelo = (req, res) => {
   });
 };
 
-exports.searchVuelos = async (req, res) => {
-  const { fecha_inicio, fecha_fin, destino, origen } = req.query;
+exports.getFlightsByPrice = async (req, res) => {
+  const { origin, destination, date, maxPrice } = req.query;
 
-  // Validar parámetros requeridos
-  if (!fecha_inicio || !fecha_fin || !destino || !origen) {
-    return res.status(400).json({
-      message: "Se requieren fecha_inicio, fecha_fin, origen y destino para la búsqueda",
-    });
+  if (!origin || !destination || !date || !maxPrice) {
+    return res.status(400).json({ error: "Faltan parámetros: origin, destination, date, maxPrice" });
   }
 
-  // Validar formato de fechas
-  const fechaInicioDate = new Date(fecha_inicio);
-  const fechaFinDate = new Date(fecha_fin);
+  const flights = await searchFlights(origin, destination, date, maxPrice);
 
-  if (isNaN(fechaInicioDate.getTime()) || isNaN(fechaFinDate.getTime())) {
-    return res.status(400).json({
-      message: "Las fechas deben estar en un formato válido",
-    });
+  if (!flights) {
+    return res.status(500).json({ error: "Error al obtener los vuelos" });
   }
 
-  if (fechaInicioDate > fechaFinDate) {
-    return res.status(400).json({
-      message: "La fecha de inicio debe ser anterior a la fecha de fin",
-    });
-  }
+  // Formatear la respuesta con aerolínea, precio y horarios
+  const formattedFlights = flights.map((flight) => ({
+    aerolinea: flight.validatingAirlineCodes[0],
+    precio: flight.price.total,
+    moneda: flight.price.currency,
+    itinerario: flight.itineraries.map((itinerary) => ({
+      salida: itinerary.segments[0].departure.iataCode,
+      llegada: itinerary.segments[itinerary.segments.length - 1].arrival.iataCode,
+      horaSalida: itinerary.segments[0].departure.at,
+      horaLlegada: itinerary.segments[itinerary.segments.length - 1].arrival.at,
+    })),
+  }));
 
-  try {
-    // Realizar la búsqueda de vuelos con la API de Amadeus
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: origen,
-      destinationLocationCode: destino,
-      departureDate: fecha_inicio,
-      returnDate: fecha_fin,
-      adults: adultos || '1',
-      children: niños || '0',
-      infants: bebés || '0',
-      travelClass: clase || 'ECONOMY',
-    });
-
-    // Extraer los datos de los vuelos
-    const vuelos = response.data.map((vuelo) => {
-      const primerSegmento = vuelo.itineraries[0].segments[0];
-      const ultimoSegmento = vuelo.itineraries[0].segments.slice(-1)[0];
-
-      return {
-        id: vuelo.id,
-        precio: vuelo.price.total,
-        origen: primerSegmento.departure.iataCode,
-        destino: ultimoSegmento.arrival.iataCode,
-        fechaSalida: primerSegmento.departure.at,
-        fechaLlegada: ultimoSegmento.arrival.at,
-        aerolinea: primerSegmento.carrierCode,
-      };
-    });
-
-    // Devolver los vuelos encontrados
-    return res.status(200).json(vuelos);
-  } catch (error) {
-    console.error('Error al buscar vuelos:', error);
-    return res.status(500).json({
-      error: "Error al buscar los vuelos",
-      details: error.response ? error.response.data : error.message,
-    });
-  }
+  res.json({ vuelos: formattedFlights });
 };
