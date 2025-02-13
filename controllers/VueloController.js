@@ -62,14 +62,29 @@ exports.deleteVuelo = (req, res) => {
   });
 };
 
-// Buscar vuelos en un intervalo de fechas y por destino
 exports.searchVuelos = async (req, res) => {
-  const { fecha_inicio, fecha_fin, destino, origen } = req.query;
+  const { fecha_inicio, fecha_fin, destino, origen, adultos, niños, bebés, clase } = req.query;
 
   // Validar parámetros requeridos
   if (!fecha_inicio || !fecha_fin || !destino || !origen) {
     return res.status(400).json({
       message: "Se requieren fecha_inicio, fecha_fin, origen y destino para la búsqueda",
+    });
+  }
+
+  // Validar formato de fechas
+  const fechaInicioDate = new Date(fecha_inicio);
+  const fechaFinDate = new Date(fecha_fin);
+
+  if (isNaN(fechaInicioDate.getTime()) || isNaN(fechaFinDate.getTime())) {
+    return res.status(400).json({
+      message: "Las fechas deben estar en un formato válido",
+    });
+  }
+
+  if (fechaInicioDate > fechaFinDate) {
+    return res.status(400).json({
+      message: "La fecha de inicio debe ser anterior a la fecha de fin",
     });
   }
 
@@ -80,25 +95,33 @@ exports.searchVuelos = async (req, res) => {
       destinationLocationCode: destino,
       departureDate: fecha_inicio,
       returnDate: fecha_fin,
-      adults: '1', // Puedes agregar más parámetros según tus necesidades
+      adults: adultos || '1',
+      children: niños || '0',
+      infants: bebés || '0',
+      travelClass: clase || 'ECONOMY',
     });
 
     // Extraer los datos de los vuelos
-    const vuelos = response.data.map((vuelo) => ({
-      id: vuelo.id,
-      precio: vuelo.price.total,
-      origen: vuelo.itineraries[0].segments[0].departure.iataCode,
-      destino: vuelo.itineraries[0].segments.slice(-1)[0].arrival.iataCode,
-      fechaSalida: vuelo.itineraries[0].segments[0].departure.at,
-      fechaLlegada: vuelo.itineraries[0].segments.slice(-1)[0].arrival.at,
-      aerolinea: vuelo.itineraries[0].segments[0].carrierCode,
-    }));
+    const vuelos = response.data.map((vuelo) => {
+      const primerSegmento = vuelo.itineraries[0].segments[0];
+      const ultimoSegmento = vuelo.itineraries[0].segments.slice(-1)[0];
+
+      return {
+        id: vuelo.id,
+        precio: vuelo.price.total,
+        origen: primerSegmento.departure.iataCode,
+        destino: ultimoSegmento.arrival.iataCode,
+        fechaSalida: primerSegmento.departure.at,
+        fechaLlegada: ultimoSegmento.arrival.at,
+        aerolinea: primerSegmento.carrierCode,
+      };
+    });
 
     // Devolver los vuelos encontrados
-    res.status(200).json(vuelos);
+    return res.status(200).json(vuelos);
   } catch (error) {
     console.error('Error al buscar vuelos:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Error al buscar los vuelos",
       details: error.response ? error.response.data : error.message,
     });
