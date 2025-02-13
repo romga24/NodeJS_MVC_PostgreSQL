@@ -12,6 +12,9 @@ app.use(cors());
 // Configura las rutas
 app.use("/api/aeropuertos", aeropuertoRoutes);
 app.use("/api/clientes", clienteRoutes);
+app.use("/api/vuelos", clienteRoutes);
+
+
 
 // Ruta de prueba
 app.get("/", (req, res) => {
