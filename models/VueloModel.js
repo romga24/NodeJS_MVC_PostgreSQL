@@ -1,4 +1,4 @@
-const db = require('../config/db'); // Importa la conexión a la base de datos
+const db = require('../config/bd'); // Importa la conexión a la base de datos
 
 const VueloModel = {
   // Obtener todos los vuelos
