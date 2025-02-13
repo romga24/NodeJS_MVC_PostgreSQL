@@ -63,7 +63,7 @@ exports.deleteVuelo = (req, res) => {
 };
 
 exports.searchVuelos = async (req, res) => {
-  const { fecha_inicio, fecha_fin, destino, origen, adultos, niños, bebés, clase } = req.query;
+  const { fecha_inicio, fecha_fin, destino, origen } = req.query;
 
   // Validar parámetros requeridos
   if (!fecha_inicio || !fecha_fin || !destino || !origen) {
