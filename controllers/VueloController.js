@@ -61,14 +61,14 @@ exports.deleteVuelo = (req, res) => {
 };
 
 exports.getVuelosConFiltro = (req, res) => {
-  const { idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros } = req.body;
+  const { codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros } = req.body;
 
   // Verificar que los parámetros requeridos estén presentes
   if (!idOrigen || !idDestino || !fechaIda || !pasajeros) {
     return res.status(400).json({ error: "Faltan parámetros obligatorios" });
   }
 
-  VueloModel.getVuelosConPrecios(idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros, (err, result) => {
+  VueloModel.getVuelosConFiltro(codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros, (err, result) => {
     if (err) return res.status(500).json({ error: "Error al obtener los vuelos", details: err.message });
 
     res.status(200).json(result);

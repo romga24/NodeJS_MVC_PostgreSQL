@@ -74,50 +74,54 @@ const VueloModel = {
   },
 
   // Obtener vuelos con precios
-  getVuelosConFiltro: (idOrigen, idDestino, fechaIda, fechaVuelta, pasajeros, callback) => {
+getVuelosConFiltro: (codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros, callback) => {
     const sqlIda = `
       SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
-             v.precio AS precio_unitario, (v.precio * $1) AS precio_total,
+             v.precio_vuelo AS precio_unitario, (v.precio * $1) AS precio_total,
              a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
+             a_origen.ciudad AS ciudad_origen, a_destino.ciudad AS ciudad_destino,
+             a_origen.pais AS pais_origen, a_destino.pais AS pais_destino,  -- Aquí estaba el error
              al.nombre AS aerolinea
       FROM t_vuelos v
       JOIN t_aeropuertos a_origen ON v.id_aeropuerto_origen = a_origen.id_aeropuerto
       JOIN t_aeropuertos a_destino ON v.id_aeropuerto_destino = a_destino.id_aeropuerto
       JOIN t_aerolineas al ON v.id_aerolinea = al.id_aerolinea
-      WHERE v.id_aeropuerto_origen = $2 AND v.id_aeropuerto_destino = $3 
+      WHERE a_origen.codigo_iata = $2 AND a_destino.codigo_iata = $3 
             AND v.fecha_salida = $4
       ORDER BY v.fecha_salida;
     `;
-
-    const valuesIda = [pasajeros, idOrigen, idDestino, fechaIda];
-
+  
+    const valuesIda = [pasajeros, codigoOrigen, codigoDestino, fechaIda];
+  
     db.query(sqlIda, valuesIda, (err, resultadosIda) => {
       if (err) return callback(err, null);
-
+  
       if (!fechaVuelta) return callback(null, { ida: resultadosIda.rows, vuelta: [] });
-
+  
       const sqlVuelta = `
         SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
-               v.precio AS precio_unitario, (v.precio * $1) AS precio_total,
+               v.precio_vuelo AS precio_unitario, (v.precio * $1) AS precio_total,
                a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
+               a_origen.ciudad AS ciudad_origen, a_destino.ciudad AS ciudad_destino,
+               a_origen.pais AS pais_origen, a_destino.pais AS pais_destino,  -- Aquí también
                al.nombre AS aerolinea
         FROM t_vuelos v
         JOIN t_aeropuertos a_origen ON v.id_aeropuerto_origen = a_origen.id_aeropuerto
         JOIN t_aeropuertos a_destino ON v.id_aeropuerto_destino = a_destino.id_aeropuerto
         JOIN t_aerolineas al ON v.id_aerolinea = al.id_aerolinea
-        WHERE v.id_aeropuerto_origen = $2 AND v.id_aeropuerto_destino = $3 
+        WHERE a_origen.codigo_iata = $2 AND a_destino.codigo_iata = $3 
               AND v.fecha_salida = $4
         ORDER BY v.fecha_salida;
       `;
-
-      const valuesVuelta = [pasajeros, idDestino, idOrigen, fechaVuelta];
-
+  
+      const valuesVuelta = [pasajeros, codigoDestino, codigoOrigen, fechaVuelta];
+  
       db.query(sqlVuelta, valuesVuelta, (err, resultadosVuelta) => {
         if (err) return callback(err, null);
         callback(null, { ida: resultadosIda.rows, vuelta: resultadosVuelta.rows });
       });
     });
-  },
-};
+    }
+}
 
 module.exports = VueloModel;
