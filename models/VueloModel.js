@@ -75,11 +75,11 @@ const VueloModel = {
 
   // Obtener vuelos con precios
   getVuelosConFiltro: (codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros, callback) => {
-    const numPasajeros = parseInt(pasajeros, 10);
+    
     
     const sqlIda = `
       SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
-             v.precio_vuelo AS precio_unitario, (v.precio * $1) AS precio_total,
+             v.precio_vuelo AS precio_unitario, (v.precio_vuelo * $1) AS precio_total,
              a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
              a_origen.ciudad AS ciudad_origen, a_destino.ciudad AS ciudad_destino,
              a_origen.pais AS pais_origen, a_destino.pais AS pais_destino,  -- Aquí estaba el error
@@ -93,7 +93,7 @@ const VueloModel = {
       ORDER BY v.fecha_salida;
     `;
   
-    const valuesIda = [numPasajeros, codigoOrigen, codigoDestino, fechaIda];
+    const valuesIda = [pasajeros, codigoOrigen, codigoDestino, fechaIda];
   
     db.query(sqlIda, valuesIda, (err, resultadosIda) => {
       if (err) return callback(err, null);
@@ -102,7 +102,7 @@ const VueloModel = {
   
       const sqlVuelta = `
         SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
-               v.precio_vuelo AS precio_unitario, (v.precio * $1) AS precio_total,
+               v.precio_vuelo AS precio_unitario, (v.precio_vuelo * $1) AS precio_total,
                a_origen.nombre AS aeropuerto_origen, a_destino.nombre AS aeropuerto_destino,
                a_origen.ciudad AS ciudad_origen, a_destino.ciudad AS ciudad_destino,
                a_origen.pais AS pais_origen, a_destino.pais AS pais_destino,  -- Aquí también
@@ -116,7 +116,7 @@ const VueloModel = {
         ORDER BY v.fecha_salida;
       `;
   
-      const valuesVuelta = [numPasajeros, codigoDestino, codigoOrigen, fechaVuelta];
+      const valuesVuelta = [pasajeros, codigoDestino, codigoOrigen, fechaVuelta];
   
       db.query(sqlVuelta, valuesVuelta, (err, resultadosVuelta) => {
         if (err) return callback(err, null);

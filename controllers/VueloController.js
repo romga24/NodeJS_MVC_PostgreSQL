@@ -64,32 +64,11 @@ exports.getVuelosConFiltro = (req, res) => {
   
   const { codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros } = req.body;
 
-  // Verificar que los parámetros requeridos estén presentes
   if (!codigoOrigen || !codigoDestino || !fechaIda || !pasajeros) {
     return res.status(400).json({ error: "Faltan parámetros obligatorios" });
   }
 
-  // Convertir 'pasajeros' a entero
-  const numPasajeros = parseInt(pasajeros, 10);
-
-  // Verificar si 'pasajeros' es un número válido
-  if (isNaN(numPasajeros) || numPasajeros <= 0) {
-    return res.status(400).json({ error: "El número de pasajeros no es válido" });
-  }
-
-  // Validar y convertir las fechas al formato YYYY-MM-DD
-  const isValidDate = (dateStr) => {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;  // Regex para validar fecha en formato YYYY-MM-DD
-    return regex.test(dateStr);
-  };
-
-  if (!isValidDate(fechaIda)) {
-    return res.status(400).json({ error: "La fecha de ida no es válida. El formato debe ser YYYY-MM-DD" });
-  }
-
-  if (fechaVuelta && !isValidDate(fechaVuelta)) {
-    return res.status(400).json({ error: "La fecha de vuelta no es válida. El formato debe ser YYYY-MM-DD" });
-  }
+  const numPasajeros = parseInt(pasajeros);
 
   // Llamada al modelo para obtener los vuelos
   VueloModel.getVuelosConFiltro(codigoOrigen, codigoDestino, fechaIda, fechaVuelta, numPasajeros, (err, result) => {
