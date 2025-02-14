@@ -74,7 +74,13 @@ const VueloModel = {
   },
 
   // Obtener vuelos con precios
-getVuelosConFiltro: (codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros, callback) => {
+  getVuelosConFiltro: (codigoOrigen, codigoDestino, fechaIda, fechaVuelta, pasajeros, callback) => {
+    const numPasajeros = parseInt(pasajeros, 10);
+  
+    if (isNaN(numPasajeros) || numPasajeros <= 0) {
+        return callback({ error: "El número de pasajeros no es válido" }, null);
+    }
+    
     const sqlIda = `
       SELECT v.id_vuelo, v.numero_vuelo, v.fecha_salida, v.fecha_llegada, 
              v.precio_vuelo AS precio_unitario, (v.precio * $1) AS precio_total,
