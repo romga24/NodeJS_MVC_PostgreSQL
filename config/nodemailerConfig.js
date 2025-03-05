@@ -23,12 +23,17 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const sendEmail = (to, subject, text) => {
+const sendEmail =(to, nombre_usuario, codigo_verificacion) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,  
     to: to,                        
-    subject: subject,              
-    text: text                     
+    subject: "Código de Verificación",              
+    html: `
+          <p>Hola ${nombre_usuario},</p>
+          <p>Tu código de verificación es: <strong>${codigo_verificacion}</strong>.</p>
+          <p>Este código expira en 5 minutos.</p>
+          <p>Saludos,<br>El equipo de soporte de AirLink</p>
+        `                     
   };
 
   return transporter.sendMail(mailOptions);

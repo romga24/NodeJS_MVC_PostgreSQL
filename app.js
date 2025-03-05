@@ -1,10 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const aeropuertoRoutes = require("./routes/AeropuertoRoutes");
-const clienteRoutes = require("./routes/ClienteRoutes");
-const vuelosRoutes = require("./routes/VueloRoutes");
-
+const routes = require("./routes/routes");
 const app = express();
 
 // Middleware para parsear JSON
@@ -12,11 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 // Configura las rutas
-app.use("/api/aeropuertos", aeropuertoRoutes);
-app.use("/api/clientes", clienteRoutes);
-app.use("/api/vuelos", vuelosRoutes);
-
-
+app.use("/api", routes);
 
 // Ruta de prueba
 app.get("/", (req, res) => {
@@ -24,7 +17,7 @@ app.get("/", (req, res) => {
 });
 
 // Inicia el servidor
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3001;
 app.listen(port, "0.0.0.0", () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
 });
