@@ -3,12 +3,17 @@ const { Vuelo, Avion, Asiento } = require("../models");
 
 const AsientoService = {
    
-    // Método para obtener la distribución de asientos de un vuelo
     async getAllAsientos(numeroVuelo) { 
         try {
             const vuelo = await Vuelo.findOne({
-                where: { numero_vuelo: numeroVuelo },
-                include: [{ model: Avion, as: "avion" }]
+                where: { 
+                    numero_vuelo: numeroVuelo,
+                    estado_vuelo: 'Programado' 
+                },
+                include: [{
+                    model: Avion,
+                    as: 'avion'
+                }],
             });
 
             if (!vuelo) throw new Error("Vuelo no encontrado");

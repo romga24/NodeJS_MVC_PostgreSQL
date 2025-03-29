@@ -3,6 +3,7 @@ require('dotenv').config();
 
 
 const generarToken = (cliente) => {
+  
   const payload = {
     sub: cliente.id_cliente,
     email: cliente.email,
@@ -35,8 +36,17 @@ const verificarToken = (req, res, next) => {
   }
 };
 
+const verificarAdmin = (req, res, next) => {
+  if (req.user && req.user.is_admin) {
+    return next(); 
+  }
+
+  return res.status(403).json({ message: 'Acceso denegado. Usuario no autorizado.' });
+};
+
 module.exports = {
   generarToken,
   verificarToken,
+  verificarAdmin
 };
 

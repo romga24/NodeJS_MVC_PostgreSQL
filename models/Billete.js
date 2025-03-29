@@ -1,12 +1,21 @@
-
-
 module.exports = (sequelize, DataTypes) => {
     const Billete = sequelize.define('t_billetes', {
-        id_billete: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        id_reserva: { type: DataTypes.INTEGER, references: { model: 't_reservas', key: 'id_reserva' } },
-        id_vuelo: { type: DataTypes.INTEGER, references: { model: 't_vuelos', key: 'id_vuelo' } },
-        id_pasajero: { type: DataTypes.INTEGER, references: { model: 't_pasajeros', key: 'id_pasajero' } },
-        id_asiento: { type: DataTypes.INTEGER, references: { model: 't_asientos', key: 'id_asiento' } },
+        id_billete: { 
+          type: DataTypes.INTEGER, 
+          primaryKey: true, 
+          autoIncrement: true },
+        id_reserva: { 
+          type: DataTypes.INTEGER, 
+          references: { model: 't_reservas', key: 'id_reserva' } },
+        id_vuelo: { 
+          type: DataTypes.INTEGER, 
+          references: { model: 't_vuelos', key: 'id_vuelo' } },
+        id_pasajero: { 
+          type: DataTypes.INTEGER, 
+          references: { model: 't_pasajeros', key: 'id_pasajero' } },
+        id_asiento: { 
+          type: DataTypes.INTEGER, 
+          references: { model: 't_asientos', key: 'id_asiento' } },
         localizador: { 
           type: DataTypes.STRING, 
           allowNull: false, 

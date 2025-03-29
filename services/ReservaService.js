@@ -1,10 +1,6 @@
-const { Reserva } = require('../models');
-const { Pasajero } = require('../models');
-const { Vuelo } = require('../models');
-const { Asiento } = require('../models');  
-const { Billete } = require('../models');  
-
-const MAX_CARACTERES = 6; //Contantes para definir el tope del localizador 
+const { Reserva, Pasajero, Vuelo, Asiento, Billete } = require('../models');
+  
+const MAX_CARACTERES = 6; 
 
 const ReservaService = {  
 
@@ -101,37 +97,7 @@ const ReservaService = {
       throw error;
     }
   },
-
-  generarLocalizador() {
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let localizador = '';
-    for (let i = 0; i < MAX_CARACTERES; i++) {
-      localizador += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-    }
-    return localizador;
-  },
-
-  obtenerAsientoAleatorio(distribucionAsientos) {
-    
-    const asientosDisponibles = [];
   
-    for (const fila of distribucionAsientos) {
-      for (const asiento of fila.asientos) {
-        if (asiento.estado === 'disponible') {
-          asientosDisponibles.push(asiento);
-        }
-      }
-    }
-  
-    if (asientosDisponibles.length === 0) {
-      throw new Error('No hay asientos disponibles en este vuelo');
-    }
-  
-    const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
-    return asientosDisponibles[indexAleatorio];
-  },
-  
-  // Eliminar billete de una reserva del cliente
   async eliminarBillete(id_cliente, id_reserva, id_billete) {
     try {
 
@@ -139,33 +105,32 @@ const ReservaService = {
         where: { id_reserva, id_cliente },
       });
 
-      if (!reserva) {
-        return { success: false, message: 'Reserva no encontrada o no pertenece al cliente.' };
-      }
-
       const billete = await Billete.findOne({
         where: { id_billete, id_reserva },
       });
 
-      if (!billete) {
-        return { success: false, message: 'Billete no encontrado en esta reserva.' };
-      }
-
       const asiento = await Asiento.findByPk(billete.id_asiento);
+      
       if (asiento) {
         await asiento.destroy();
       }
 
       await billete.destroy();
 
-      return { success: true };
+      // Verificar si quedan billetes en la reserva
+      const billetesRestantes = await Billete.count({
+        where: { id_reserva }
+      });
+
+      if (billetesRestantes === 0) await reserva.destroy();
+
+      return { success: true, message: 'Billete eliminado exitosamente.' };
 
     } catch (error) {
       console.error('Error al eliminar el billete:', error);
       throw error;
     }
-    
-     },
+  },
 
     // Obtener reservas del cliente
     async obtenerReservasPorCliente(id_cliente) {
@@ -253,6 +218,35 @@ const ReservaService = {
       console.error('Error al eliminar la reserva:', error);
       throw error;
     }
+  },
+
+  generarLocalizador() {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let localizador = '';
+    for (let i = 0; i < MAX_CARACTERES; i++) {
+      localizador += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return localizador;
+  },
+
+  obtenerAsientoAleatorio(distribucionAsientos) {
+    
+    const asientosDisponibles = [];
+  
+    for (const fila of distribucionAsientos) {
+      for (const asiento of fila.asientos) {
+        if (asiento.estado === 'disponible') {
+          asientosDisponibles.push(asiento);
+        }
+      }
+    }
+  
+    if (asientosDisponibles.length === 0) {
+      throw new Error('No hay asientos disponibles en este vuelo');
+    }
+  
+    const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
+    return asientosDisponibles[indexAleatorio];
   }
 };
 

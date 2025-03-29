@@ -47,7 +47,6 @@ exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
       pasajero.ida.columna = asientoIda.columna;
       pasajero.ida.codigo_asiento = asientoIda.codigo_asiento;
 
-      // Asiento de vuelta
       const asientoVuelta = ReservaService.obtenerAsientoAleatorio(distribucionVuelta.distribucion_asientos);
       pasajero.vuelta.fila = asientoVuelta.fila;
       pasajero.vuelta.columna = asientoVuelta.columna;
@@ -67,7 +66,6 @@ exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error al realizar la reserva:', error);
     return res.status(500).json({ error: 'Error interno del servidor. No se pudo realizar la reserva.' });
   }
 };

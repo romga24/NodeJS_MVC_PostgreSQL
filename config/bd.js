@@ -49,8 +49,11 @@ const Cliente = require('./../models/Pasajero')(sequelize, DataTypes)*/
    await Asiento.sync({ force: true });
    await Billete.sync({ force: true });
    await Pasajero.sync({ force: true });*/
-   //await sequelize.sync({ force: true });
 
+   /*************Comandos para realizar modificaciones en las tablas de la base de datos*********/
+   
+   /*await sequelize.sync({ force: true }); */
+   /*await sequelize.sync({ alter: true }); */
 
   console.log('Todas las tablas sincronizadas correctamente');
   } catch (error) {
@@ -63,10 +66,10 @@ const Cliente = require('./../models/Pasajero')(sequelize, DataTypes)*/
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Conexión establecida correctamente.");
+    console.log("> Conexión establecida correctamente.");
   })
   .catch((error) => {
-    console.error("Error de conexión:", error);
+    console.error("> Error de conexión:", error);
   });
 
 module.exports = sequelize;

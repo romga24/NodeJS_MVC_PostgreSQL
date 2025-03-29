@@ -57,26 +57,14 @@ exports.loginCliente = async (req, res) => {
       expira: Date.now() + 5 * 60 * 1000,
     });
 
-    try {
-      await emailService.sendEmail(cliente.email, cliente.nombre_usuario, codigoVerificacion);
-    } catch (error) {
-      return res.status(500).json({ 
-        message: "Error al enviar el código de verificación. Intenta nuevamente."
-      });
-    }
-
     return res.status(200).json({
       message: "Inicio de sesión exitoso. Se ha enviado un código de verificación al correo.",
-      token, // Contiene el id del cliente, el email y si es admin o no
+      token,
       estaLogueado: true,
     });
 
   } catch (err) {
-    return res.status(500).json({
-      error: "Error al intentar iniciar sesión",
-      estaLogueado: false,
-      details: err.message,
-    });
+    return res.status(500).json({ error: "Error al intentar iniciar sesión" });
   }
 };
 
@@ -110,45 +98,7 @@ exports.deleteCliente = async (req, res) => {
   }
 };
 
-exports.verificarCodigo = async (req, res) => {
-  try {
-    const id_cliente = req.user.sub; 
-    const { codigo } = req.body;
 
-    if (!codigo) {
-      return res.status(400).json({ message: "Código es requerido" });
-    }
-
-    if (!global.codigosVerificacion) {
-      return res.status(500).json({ message: "Error interno: sistema de verificación no disponible" });
-    }
-
-    const registro = global.codigosVerificacion.get(id_cliente);
-
-    if (!registro) {
-      return res.status(400).json({ message: "Código no encontrado o expirado" });
-    }
-
-    if (registro.expira < Date.now()) {
-      global.codigosVerificacion.delete(id_cliente);
-      return res.status(400).json({ message: "Código expirado" });
-    }
-
-    if (registro.codigo !== codigo) {
-      return res.status(400).json({ message: "Código incorrecto" });
-    }
-
-    global.codigosVerificacion.delete(id_cliente);
-
-    return res.status(200).json({ message: "Verificación exitosa" });
-
-  } catch (err) {
-    return res.status(500).json({
-      error: "Error al verificar el código",
-      details: err.message,
-    });
-  }
-};
 
 
 

@@ -1,8 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-  
   const Vuelo = sequelize.define('t_vuelos', {
-    id_vuelo: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    numero_vuelo: { type: DataTypes.STRING, allowNull: false, unique: true },
+    id_vuelo: { 
+      type: DataTypes.INTEGER, 
+      primaryKey: true, 
+      autoIncrement: true },
+    numero_vuelo: { 
+      type: DataTypes.STRING, 
+      allowNull: false, 
+      unique: true },
     id_aeropuerto_origen: { 
       type: DataTypes.INTEGER, 
       references: { model: 't_aeropuertos', key: 'id_aeropuerto' }
@@ -22,12 +27,17 @@ module.exports = (sequelize, DataTypes) => {
       references: { model: 't_aerolineas', key: 'id_aerolinea' }
     },
     precio_vuelo: { 
-      type: DataTypes.FLOAT,  // Usamos FLOAT para valores decimales
+      type: DataTypes.FLOAT,  
       allowNull: false, 
-      validate: { min: 0 } // Asegura que el precio no sea negativo
+      validate: { min: 0 } 
+    },
+    estado_vuelo: { 
+      type: DataTypes.ENUM('Programado', 'Cancelado'),
+      allowNull: false,
+      defaultValue: 'Programado'
     }
   },{
-    freezeTableName: true  // Evita que Sequelize pluralice el nombre de la tabla
+    freezeTableName: true  
   });
 
   // Relaciones

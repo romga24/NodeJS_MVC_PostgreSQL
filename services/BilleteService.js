@@ -5,7 +5,6 @@ const BilleteService = {
 
   async obtenerInfoBillete(localizador, apellido) {
     try {
-      // Validar que ambos parámetros son proporcionados
       if (!localizador || !apellido) {
         return { success: false, message: 'Se deben proporcionar tanto el localizador como los apellidos.' };
       }
@@ -27,7 +26,7 @@ const BilleteService = {
                 [Op.iLike]: `%${apellido}%`
               }
             },
-            required: true // Asegura que el pasajero con el apellido coincidente debe estar presente
+            required: true 
           },
           {
             model: Vuelo,
@@ -45,8 +44,7 @@ const BilleteService = {
           }
         ]
       });
-  
-      // Verificar si se encontró el billete
+
       if (!billete) {
         return { success: false, message: 'Billete no encontrado con ese localizador o apellido.' };
       }
@@ -75,6 +73,7 @@ const BilleteService = {
             precio_vuelo: billete.vuelo.precio_vuelo,
             aerolinea: billete.vuelo.aerolinea.nombre,
             avion: billete.vuelo.avion.modelo,
+            estado_vuelo: billete.vuelo.estado_vuelo,
             origen: {
               aeropuerto: billete.vuelo.aeropuerto_origen.nombre,
               ciudad: billete.vuelo.aeropuerto_origen.ciudad,

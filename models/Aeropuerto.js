@@ -1,10 +1,22 @@
 module.exports = (sequelize, DataTypes) => {
   const Aeropuerto = sequelize.define('t_aeropuertos', {
-    id_aeropuerto: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    nombre: { type: DataTypes.STRING, allowNull: false },
-    ciudad: { type: DataTypes.STRING, allowNull: false },
-    pais: { type: DataTypes.STRING, allowNull: false },
-    codigo_iata: { type: DataTypes.STRING, allowNull: false, unique: true }
+    id_aeropuerto: { 
+      type: DataTypes.INTEGER, 
+      primaryKey: true, 
+      autoIncrement: true },
+    nombre: { 
+      type: DataTypes.STRING, 
+      allowNull: false },
+    ciudad: { 
+      type: DataTypes.STRING, 
+      allowNull: false },
+    pais: { 
+      type: DataTypes.STRING, 
+      allowNull: false },
+    codigo_iata: { 
+      type: DataTypes.STRING, 
+      allowNull: false, 
+      unique: true }
   },{
     freezeTableName: true  // Evita que Sequelize pluralice el nombre de la tabla
   });

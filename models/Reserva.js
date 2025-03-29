@@ -1,8 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Reserva = sequelize.define('t_reservas', {
-    id_reserva: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    id_cliente: { type: DataTypes.INTEGER, references: { model: 't_clientes', key: 'id_cliente' } },
-    fecha_reserva: { type: DataTypes.DATE, defaultValue: DataTypes.NOW, allowNull: false }
+    id_reserva: { 
+      type: DataTypes.INTEGER, 
+      primaryKey: true, 
+      autoIncrement: true },
+    id_cliente: { 
+      type: DataTypes.INTEGER, 
+      references: { model: 't_clientes', key: 'id_cliente' } },
+    fecha_reserva: { 
+      type: DataTypes.DATE, 
+      defaultValue: DataTypes.NOW, 
+      allowNull: false }
   },{
     freezeTableName: true  // Evita que Sequelize pluralice el nombre de la tabla
   });
