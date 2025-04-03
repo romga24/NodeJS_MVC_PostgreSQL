@@ -1,29 +1,34 @@
 const ReservaService = require('../services/ReservaService');
 const AsientoService = require('../services/AsientoService');
-
+const emailService = require("../config/nodemailerConfig");
 
 exports.realizarReserva = async (req, res) => { 
   try {
-    
     const id_cliente = req.user.sub;
-    
     const { codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros } = req.body;
-    
+
     if (!id_cliente || !codigo_vuelo_ida || !codigo_vuelo_vuelta || !Array.isArray(pasajeros) || pasajeros.length === 0) {
       return res.status(400).json({ error: 'Datos inválidos: Faltan datos necesarios o pasajeros vacíos.' });
     }
 
+    // Realizar la reserva
     const reserva = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
+    
+    // Enviar correos con los detalles de la reserva
+    await emailService.enviarCorreoVuelo(reserva.reservaId);
 
-    return res.status(201).json({ message: 'Reserva realizada con éxito', reserva });
+    // Devolver el id de la reserva con un mensaje de éxito
+    return res.status(201).json({
+      message: 'Reserva realizada con éxito y correos enviados',
+      reservaId: reserva.reservaId  // Ahora devolvemos solo el ID de la reserva
+    });
 
   } catch (error) {
     console.error('Error al realizar la reserva:', error);
-    // Respuesta en caso de error
     return res.status(500).json({ error: 'Error interno del servidor. No se pudo realizar la reserva.' });
   }
-
 };
+
 
 exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
   try {

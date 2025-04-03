@@ -12,19 +12,15 @@ const ReservaService = {
     });
   },
 
-  // Realizar la reserva (procesar pasajeros, asientos y billetes)
   async realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros) {
     try {
       // Crear la reserva
       const reserva = await this.crearReserva(id_cliente);
-
+  
       // Procesar cada pasajero
       for (const pasajero of pasajeros) {
-        
         const [existingPasajero, created] = await Pasajero.findOrCreate({
-          where: {
-            nif: pasajero.nif,  // Usamos el `nif` como identificador único
-          },
+          where: { nif: pasajero.nif },
           defaults: {
             nombre: pasajero.nombre,
             apellidos: pasajero.apellidos,
@@ -32,14 +28,12 @@ const ReservaService = {
             telefono: pasajero.telefono,
           }
         });
-
+  
         const pasajeroId = existingPasajero.id_pasajero;
-
+  
         // Buscar el vuelo de ida
-        const vueloIda = await Vuelo.findOne({
-          where: { numero_vuelo: codigo_vuelo_ida }
-        });
-
+        const vueloIda = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_ida } });
+  
         // Reservar asiento de ida
         const asientoIda = await Asiento.create({
           id_avion: vueloIda.id_avion,
@@ -49,7 +43,7 @@ const ReservaService = {
           codigo_asiento: pasajero.ida.codigo_asiento,
           estado: 'reservado'
         });
-
+  
         // Crear el billete de ida
         await Billete.create({
           id_reserva: reserva.id_reserva,
@@ -59,15 +53,11 @@ const ReservaService = {
           localizador: this.generarLocalizador(),
           precio: pasajero.ida.precio
         });
-
-        // Si hay vuelo de vuelta, realizar la misma lógica
-        if (codigo_vuelo_vuelta != null) {
-          
-          const vueloVuelta = await Vuelo.findOne({
-            where: { numero_vuelo: codigo_vuelo_vuelta }
-          });
-
-          // Reservar asiento de vuelta
+  
+        // Si hay vuelo de vuelta, procesarlo
+        if (codigo_vuelo_vuelta) {
+          const vueloVuelta = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_vuelta } });
+  
           const asientoVuelta = await Asiento.create({
             id_avion: vueloVuelta.id_avion,
             id_vuelo: vueloVuelta.id_vuelo,
@@ -76,8 +66,7 @@ const ReservaService = {
             codigo_asiento: pasajero.vuelta.codigo_asiento,
             estado: 'reservado'
           });
-
-          // Crear el billete de vuelta
+  
           await Billete.create({
             id_reserva: reserva.id_reserva,
             id_vuelo: vueloVuelta.id_vuelo,
@@ -88,15 +77,16 @@ const ReservaService = {
           });
         }
       }
-
+  
+      // Devolvemos el ID de la reserva directamente
       return { success: true, reservaId: reserva.id_reserva };
-
+  
     } catch (error) {
-      // Si algo sale mal, lanzamos el error para que pueda ser manejado en otro lado
       console.error('Error al realizar la reserva:', error);
       throw error;
     }
   },
+  
   
   async eliminarBillete(id_cliente, id_reserva, id_billete) {
     try {

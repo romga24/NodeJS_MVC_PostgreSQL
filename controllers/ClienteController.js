@@ -1,6 +1,5 @@
 const clienteModel = require("../services/ClienteService"); 
 const generarToken = require('./AuthController');
-const emailService = require("../config/nodemailerConfig");
 const crypto = require("crypto");
 require("dotenv").config();
 

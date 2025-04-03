@@ -11,6 +11,7 @@
  * - Permite enviar correos especificando destinatario, asunto y mensaje.
  *
  *********************************************************/
+const { Reserva, Pasajero, Vuelo, Asiento, Billete } = require('../models');
 
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -23,22 +24,59 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const sendEmail =(to, nombre_usuario, codigo_verificacion) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,  
-    to: to,                        
-    subject: "Código de Verificación",              
-    html: `
-          <p>Hola ${nombre_usuario},</p>
-          <p>Tu código de verificación es: <strong>${codigo_verificacion}</strong>.</p>
-          <p>Este código expira en 5 minutos.</p>
-          <p>Saludos,<br>El equipo de soporte de AirLink</p>
-        `                     
-  };
+const enviarCorreoVuelo = async (id_reserva) => {
+  try {
+    // Obtener la reserva con los billetes y detalles de vuelo
+    const reserva = await Reserva.findOne({
+      where: { id_reserva },
+      include: [
+        {
+          model: Billete,
+          as: 'billetes',
+          include: [
+            { model: Vuelo, as: 'vuelo' },
+            { model: Asiento, as: 'asiento' },
+            { model: Pasajero, as: 'pasajero' }
+          ]
+        }
+      ]
+    });
 
-  return transporter.sendMail(mailOptions);
+    if (!reserva) throw new Error('Reserva no encontrada');
+
+    // Enviar un correo a cada pasajero
+    for (const billete of reserva.billetes) {
+      const { pasajero, vuelo, asiento, localizador, precio } = billete;
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: pasajero.email,
+        subject: "Detalles de tu vuelo - AirLink",
+        html: `
+          <p>Hola ${pasajero.nombre} ${pasajero.apellidos},</p>
+          <p>Aquí están los detalles de tu vuelo:</p>
+          <ul>
+            <li><strong>Vuelo:</strong> ${vuelo.numero_vuelo}</li>
+            <li><strong>Fecha de salida:</strong> ${vuelo.fecha_salida}</li>
+            <li><strong>Fecha de llegada:</strong> ${vuelo.fecha_llegada}</li>
+            <li><strong>Asiento:</strong> ${asiento.codigo_asiento} (Fila: ${asiento.fila}, Columna: ${asiento.columna})</li>
+            <li><strong>Precio:</strong> ${precio} EUR</li>
+            <li><strong>Localizador:</strong> ${localizador}</li>
+          </ul>
+          <p>¡Gracias por volar con AirLink!</p>
+        `
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+
+    return { success: true, message: 'Correos enviados exitosamente.' };
+  } catch (error) {
+    console.error('Error al enviar correos:', error);
+    throw error;
+  }
 };
 
 module.exports = {
-  sendEmail
+  enviarCorreoVuelo
 };
