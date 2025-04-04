@@ -21,7 +21,7 @@ router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.de
 //router.post('/clientes/verificar-codigo', verificarToken, clienteController.verificarCodigo);
 
 /************************RUTA VUELO CONTROLLER*********************************/
-router.get('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
+router.post('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
 /*Solo el administrador puede crear los vuelos*/
 router.post('/vuelos', verificarToken, verificarAdmin, vueloController.createVuelo);
 router.get('/vuelos', vueloController.getAllVuelos); //ok

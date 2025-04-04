@@ -25,7 +25,7 @@ exports.createVuelo = async (req, res) => {
 
 exports.getVuelosConFiltro = async (req, res) => {
   try {
-    const { codigo_origen, codigo_destino, fecha_ida, fecha_vuelta, numero_pasajeros } = req.query;
+    const { codigo_origen, codigo_destino, fecha_ida, fecha_vuelta, numero_pasajeros } = req.body;
     if (!codigo_origen || !codigo_destino || !fecha_ida) {
       return res.status(400).json({ error: 'Faltan parámetros requeridos: codigoOrigen, codigoDestino, fechaIda.' });
     }
