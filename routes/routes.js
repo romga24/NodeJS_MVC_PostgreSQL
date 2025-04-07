@@ -37,7 +37,7 @@ router.get('/aviones', avionController.getAllAviones);
 router.get("/aeropuertos", aeropuertoController.getAllAeropuertos); //ok
 
 /************************RUTA ASIENTO CONTROLLER*********************************/
-router.get('/asientos/vuelo/:numero_vuelo', asientoController.getAsientosByVuelo);
+router.get('/asientos/vuelo/:numero_vuelo', verificarToken, asientoController.getAsientosByVuelo);
 
 /************************RUTA RESERVA CONTROLLER*********************************/
 router.put('/reservas/realizar-reserva', verificarToken, reservaController.realizarReserva);
