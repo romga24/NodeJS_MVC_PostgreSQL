@@ -3,8 +3,6 @@ const generarToken = require('./AuthController');
 const crypto = require("crypto");
 require("dotenv").config();
 
-global.codigosVerificacion = global.codigosVerificacion || new Map();
-
 //okk
 exports.getClienteById = async (req, res) => {
   try {
@@ -41,7 +39,7 @@ exports.loginCliente = async (req, res) => {
     const cliente = await clienteModel.login(usuarioOEmail, contraseña);
     
     if (!cliente) {
-      return res.status(401).json({ message: "Credenciales incorrectas", estaLogueado: false });
+      return res.status(401).json({ message: "Credenciales incorrectas" });
     }
     
     const token = generarToken.generarToken(cliente);

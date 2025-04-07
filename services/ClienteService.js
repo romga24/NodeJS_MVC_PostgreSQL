@@ -27,24 +27,24 @@ const ClienteService = {
   },
 
   //ok
-  async login(usuarioOEmail, password) {    
-    try {
+  async login(usuarioOEmail, password) {        
+    try {   
       const cliente = await Cliente.findOne({
         where: {
           [Op.or]: [{ nombre_usuario: usuarioOEmail }, { email: usuarioOEmail }],
         },
       });
-      if (!cliente) {
-        return false;
-      }
-      const isMatch = await bcrypt.compare(password, cliente.contraseña);     
+      if (!cliente) return false; 
+      const isMatch = await bcrypt.compare(password, cliente.contraseña);          
       if(!isMatch) {
         return cliente.contraseña == password ? cliente : false;
+      }else{
+        return cliente;
       }
     } catch (error) {
       console.error("Error en el login:", error);
       throw new Error("Error en el login.");
-    }
+    } 
   },
 
   //ok
