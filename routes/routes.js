@@ -18,7 +18,6 @@ router.post("/clientes", clienteController.createCliente); //ok
 router.post("/clientes/login", clienteController.loginCliente); //ok
 router.put("/clientes/actualizar-datos-cliente", verificarToken, clienteController.updateCliente); //ok
 router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.deleteCliente); //ok
-//router.post('/clientes/verificar-codigo', verificarToken, clienteController.verificarCodigo);
 
 /************************RUTA VUELO CONTROLLER*********************************/
 router.post('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
