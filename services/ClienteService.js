@@ -27,24 +27,36 @@ const ClienteService = {
   },
 
   //ok
-  async login(usuarioOEmail, password) {        
-    try {   
+  async login(usuarioOEmail, password) {
+    try {
+      // Buscar cliente por nombre de usuario o email
       const cliente = await Cliente.findOne({
         where: {
-          [Op.or]: [{ nombre_usuario: usuarioOEmail }, { email: usuarioOEmail }],
+          [Op.or]: [
+            { nombre_usuario: usuarioOEmail },
+            { email: usuarioOEmail }
+          ],
         },
       });
-      if (!cliente) return false; 
-      const isMatch = await bcrypt.compare(password, cliente.contraseña);          
-      if(!isMatch) {
-        return cliente.contraseña == password ? cliente : false;
-      }else{
-        return cliente;
+  
+      // Si no se encuentra el cliente
+      if (!cliente) return false;
+  
+      // Verificar la contraseña (bcrypt)
+      const isMatch = await bcrypt.compare(password, cliente.contraseña);
+  
+      // Si no coincide con bcrypt, intenta comparación directa (por compatibilidad)
+      if (!isMatch) {
+        return cliente.contraseña === password ? cliente : false;
       }
+  
+      // Si coincide con bcrypt
+      return cliente;
+  
     } catch (error) {
       console.error("Error en el login:", error);
       throw new Error("Error en el login.");
-    } 
+    }
   },
 
   //ok
