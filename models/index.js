@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = require('./../config/bd');
+const sequelize = require('./../config/postgreSQL');
 
 const models = {
     Vuelo: require('./Vuelo')(sequelize, Sequelize.DataTypes),

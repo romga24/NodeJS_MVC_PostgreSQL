@@ -124,7 +124,8 @@ const VueloService = {
         throw new Error('Aeropuerto, avión o aerolínea no encontrados.');
       }
   
-      await Vuelo.create({
+      // Crear un objeto vuelo con los datos proporcionados
+      const vueloData = {
         numero_vuelo,
         id_aeropuerto_origen,
         id_aeropuerto_destino,
@@ -133,9 +134,13 @@ const VueloService = {
         id_avion,
         id_aerolinea,
         precio_vuelo
-      });
+      };
   
-      return {message: "Vuelo creado exitosamente"};
+      // Crear el vuelo en la base de datos (autoIncrement se encarga de id_vuelo)
+      const nuevoVuelo = await Vuelo.create(vueloData);
+  
+      // Retornar un mensaje de éxito
+      return { message: "Vuelo creado exitosamente", vuelo: nuevoVuelo };
   
     } catch (error) {
       console.error('Error al crear el vuelo:', error);

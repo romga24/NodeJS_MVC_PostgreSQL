@@ -8,7 +8,6 @@ const BilleteService = {
       if (!localizador || !apellido) {
         return { success: false, message: 'Se deben proporcionar tanto el localizador como los apellidos.' };
       }
-  
       const billete = await Billete.findOne({
         where: {
           localizador: localizador

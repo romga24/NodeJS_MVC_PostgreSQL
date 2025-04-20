@@ -1,5 +1,5 @@
 const clienteModel = require("../services/ClienteService"); 
-const generarToken = require('./AuthController');
+const generarToken = require('./../middlewares/auth');
 const crypto = require("crypto");
 require("dotenv").config();
 
@@ -33,33 +33,27 @@ exports.createCliente = async (req, res) => {
 };
 
 //ok
-exports.loginCliente = async (req, res) => {
+exports.loginCliente = async (req, res) => { 
   try {
     const { usuarioOEmail, contraseña } = req.body;
-    const cliente = await clienteModel.login(usuarioOEmail, contraseña);
-    
+    const cliente = await clienteModel.login(usuarioOEmail, contraseña);  
     if (!cliente) {
       return res.status(401).json({ message: "Credenciales incorrectas" });
-    }
-    
+    }   
     const token = generarToken.generarToken(cliente);
     const codigoVerificacion = crypto.randomInt(100000, 999999).toString().padStart(6, "0");
-
     if (!global.codigosVerificacion) {
       global.codigosVerificacion = new Map();
     }
-
     global.codigosVerificacion.set(cliente.id_cliente, {
       codigo: codigoVerificacion,
       expira: Date.now() + 5 * 60 * 1000,
     });
-
     return res.status(200).json({
       message: "Inicio de sesión exitoso. Se ha enviado un código de verificación al correo.",
       token,
       estaLogueado: true,
     });
-
   } catch (err) {
     return res.status(500).json({ error: "Error al intentar iniciar sesión" });
   }

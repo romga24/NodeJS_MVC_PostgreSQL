@@ -1,7 +1,6 @@
 const BilleteService = require('../services/BilleteService');
 
 const BilleteController = {
-
   async obtenerInfoPorLocalizador(req, res) {
     const { localizador, apellido } = req.body; 
     try {

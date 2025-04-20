@@ -1,8 +1,6 @@
-
 const { Aeropuerto } = require("../models");
 
-const AeropuertoService = {
-  
+const AeropuertoService = { 
   async getAll() {
     try {
       return await Aeropuerto.findAll();

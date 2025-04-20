@@ -1,16 +1,8 @@
 const { Reserva, Pasajero, Vuelo, Asiento, Billete } = require('../models');
-  
-const MAX_CARACTERES = 6; 
+const emailService = require("../services/EmailService");
+const generarLocalizador = require('./../utils/generarLocalizador');
 
 const ReservaService = {  
-
-  // Crear la reserva
-  async crearReserva(id_cliente) {
-    return await Reserva.create({ 
-      id_cliente: id_cliente, 
-      fecha_reserva: new Date() 
-    });
-  },
 
   async realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros) {
     try {
@@ -50,12 +42,13 @@ const ReservaService = {
           id_vuelo: vueloIda.id_vuelo,
           id_pasajero: pasajeroId,
           id_asiento: asientoIda.id_asiento,
-          localizador: this.generarLocalizador(),
+          localizador: generarLocalizador(),
           precio: pasajero.ida.precio
         });
   
         // Si hay vuelo de vuelta, procesarlo
         if (codigo_vuelo_vuelta) {
+          
           const vueloVuelta = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_vuelta } });
   
           const asientoVuelta = await Asiento.create({
@@ -72,50 +65,47 @@ const ReservaService = {
             id_vuelo: vueloVuelta.id_vuelo,
             id_pasajero: pasajeroId,
             id_asiento: asientoVuelta.id_asiento,
-            localizador: this.generarLocalizador(),
+            localizador: generarLocalizador(),
             precio: pasajero.vuelta.precio
           });
         }
       }
-  
-      // Devolvemos el ID de la reserva directamente
-      return { success: true, reservaId: reserva.id_reserva };
-  
+      
+      await emailService.enviarCorreoVuelo(reserva.reservaId);
+      
+      return { success: true, reservaId: reserva.id_reserva }; 
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
       throw error;
     }
   },
   
+  // Crear la reserva
+  async crearReserva(id_cliente) {
+    return await Reserva.create({ 
+      id_cliente: id_cliente, 
+      fecha_reserva: new Date() 
+    });
+  },
   
   async eliminarBillete(id_cliente, id_reserva, id_billete) {
     try {
-
       const reserva = await Reserva.findOne({
         where: { id_reserva, id_cliente },
       });
-
       const billete = await Billete.findOne({
         where: { id_billete, id_reserva },
       });
-
-      const asiento = await Asiento.findByPk(billete.id_asiento);
-      
+      const asiento = await Asiento.findByPk(billete.id_asiento);      
       if (asiento) {
         await asiento.destroy();
       }
-
       await billete.destroy();
-
-      // Verificar si quedan billetes en la reserva
       const billetesRestantes = await Billete.count({
         where: { id_reserva }
       });
-
       if (billetesRestantes === 0) await reserva.destroy();
-
       return { success: true, message: 'Billete eliminado exitosamente.' };
-
     } catch (error) {
       console.error('Error al eliminar el billete:', error);
       throw error;
@@ -171,8 +161,7 @@ const ReservaService = {
           };
         });
     
-        return reservasFormateadas;
-    
+        return reservasFormateadas;    
       } catch (error) {
         console.error('Error al obtener las reservas:', error);
         throw error;
@@ -190,7 +179,6 @@ const ReservaService = {
       if (!reserva) {
         return { success: false, message: 'Reserva no encontrada.' };
       }
-
       // Liberar asientos y eliminar billetes relacionados
       for (const billete of reserva.Billetes) {
         const asiento = await Asiento.findByPk(billete.id_asiento);
@@ -199,42 +187,26 @@ const ReservaService = {
         }
         await billete.destroy();
       }
-
       await reserva.destroy();
-
       return { success: true };
-
     } catch (error) {
       console.error('Error al eliminar la reserva:', error);
       throw error;
     }
   },
 
-  generarLocalizador() {
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let localizador = '';
-    for (let i = 0; i < MAX_CARACTERES; i++) {
-      localizador += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-    }
-    return localizador;
-  },
-
-  obtenerAsientoAleatorio(distribucionAsientos) {
-    
-    const asientosDisponibles = [];
-  
+  obtenerAsientoAleatorio(distribucionAsientos) {   
+    const asientosDisponibles = []; 
     for (const fila of distribucionAsientos) {
       for (const asiento of fila.asientos) {
         if (asiento.estado === 'disponible') {
           asientosDisponibles.push(asiento);
         }
       }
-    }
-  
+    } 
     if (asientosDisponibles.length === 0) {
       throw new Error('No hay asientos disponibles en este vuelo');
-    }
-  
+    } 
     const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
     return asientosDisponibles[indexAleatorio];
   }

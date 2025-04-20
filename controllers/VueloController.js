@@ -17,7 +17,7 @@ exports.createVuelo = async (req, res) => {
       id_aerolinea,
       precio_vuelo
     });
-    res.status(201).json(nuevoVuelo);
+    res.status(201).json();
   } catch (err) {
     res.status(500).json({ error: "Error al crear el vuelo" });
   }

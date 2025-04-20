@@ -1,6 +1,6 @@
 const ReservaService = require('../services/ReservaService');
 const AsientoService = require('../services/AsientoService');
-const emailService = require("../config/nodemailerConfig");
+
 
 exports.realizarReserva = async (req, res) => { 
   try {
@@ -13,9 +13,6 @@ exports.realizarReserva = async (req, res) => {
 
     // Realizar la reserva
     const reserva = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
-    
-    // Enviar correos con los detalles de la reserva
-    await emailService.enviarCorreoVuelo(reserva.reservaId);
 
     // Devolver el id de la reserva con un mensaje de éxito
     return res.status(201).json({

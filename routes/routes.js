@@ -10,7 +10,7 @@ const reservaController = require("../controllers/ReservaController");
 const billeteController = require("../controllers/BilleteController");
 const aerolineaController = require("../controllers/AerolineaController");
 const avionController = require("../controllers/AvionController");
-const { verificarToken, verificarAdmin } = require('./../controllers/AuthController');
+const { verificarToken, verificarAdmin } = require('./../middlewares/auth');
 
 /************************RUTA CLIENTE CONTROLLER*********************************/
 router.get("/clientes/perfil-cliente",  verificarToken, clienteController.getClienteById); //ok
@@ -22,7 +22,7 @@ router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.de
 /************************RUTA VUELO CONTROLLER*********************************/
 router.post('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
 /*Solo el administrador puede crear los vuelos*/
-router.post('/vuelos', verificarToken, verificarAdmin, vueloController.createVuelo);
+router.post('/vuelos/crear', verificarToken, verificarAdmin, vueloController.createVuelo);
 router.get('/vuelos', vueloController.getAllVuelos); //ok
 router.put('/vuelos/modificar-estado-vuelo', vueloController.modificarEstadoVuelo);
 

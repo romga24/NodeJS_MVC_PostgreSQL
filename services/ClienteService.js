@@ -4,7 +4,6 @@ const { Op } = require("sequelize");
 
 const ClienteService = {
 
-  //ok
   async getById(id_cliente) {
     try {
       const cliente = await Cliente.findOne({ where: { id_cliente } });
@@ -15,7 +14,6 @@ const ClienteService = {
     }
   },
 
-  //ok
   async create(data) {
     try {
       data.contraseña = await bcrypt.hash(data.contraseña, 10);
@@ -26,7 +24,6 @@ const ClienteService = {
     }
   },
 
-  //ok
   async login(usuarioOEmail, password) {
     try {
       // Buscar cliente por nombre de usuario o email
@@ -59,7 +56,6 @@ const ClienteService = {
     }
   },
 
-  //ok
   async update(id_cliente, data) {
     try {
       const cliente = await Cliente.findOne({ where: { id_cliente } });
@@ -77,7 +73,6 @@ const ClienteService = {
     }
   },
 
-  //ok
   async deleteById(id_cliente) {
     try {
       const cliente = await Cliente.findOne({ where: { id_cliente } });
