@@ -1,6 +1,7 @@
 const { Vuelo, Avion, Asiento } = require("../models");
 
 const AsientoService = { 
+    
     async getAllAsientos(numeroVuelo) { 
         try {
             const vuelo = await Vuelo.findOne({

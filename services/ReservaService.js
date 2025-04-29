@@ -71,7 +71,7 @@ const ReservaService = {
         }
       }
       
-      await emailService.enviarCorreoVuelo(reserva.reservaId);
+      await emailService.enviarCorreoVuelo(reserva.id_reserva);
       
       return { success: true, reservaId: reserva.id_reserva }; 
     } catch (error) {
