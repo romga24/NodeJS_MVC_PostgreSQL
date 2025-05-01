@@ -21,10 +21,11 @@ router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.de
 
 /************************RUTA VUELO CONTROLLER*********************************/
 router.post('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
-/*Solo el administrador puede crear los vuelos*/
-router.post('/vuelos/crear', verificarToken, verificarAdmin, vueloController.createVuelo);
 router.get('/vuelos', vueloController.getAllVuelos); //ok
-router.put('/vuelos/modificar-estado-vuelo', verificarAdmin, vueloController.modificarEstadoVuelo); //
+
+/*Solo el administrador*/
+router.post('/vuelos/crear', verificarToken, verificarAdmin, vueloController.createVuelo);
+router.put('/vuelos/modificar-estado-vuelo', verificarAdmin, vueloController.modificarEstadoVuelo); 
 
 /************************RUTA AEROLINEAS CONTROLLER*********************************/
 router.get('/aerolineas', aerolineaController.getAllAerolineas);

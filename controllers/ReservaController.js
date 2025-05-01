@@ -17,7 +17,7 @@ exports.realizarReserva = async (req, res) => {
     // Devolver el id de la reserva con un mensaje de éxito
     return res.status(201).json({
       message: 'Reserva realizada con éxito y correos enviados',
-      reservaId: reserva.id_reserva  // Ahora devolvemos solo el ID de la reserva
+      id_reserva: reserva.id_reserva  // Ahora devolvemos solo el ID de la reserva
     });
 
   } catch (error) {
