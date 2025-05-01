@@ -12,12 +12,12 @@ exports.realizarReserva = async (req, res) => {
     }
 
     // Realizar la reserva
-    const reservaId = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
+    const reserva = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
 
     // Devolver el id de la reserva con un mensaje de éxito
     return res.status(201).json({
       message: 'Reserva realizada con éxito y correos enviados',
-      reservaId: reservaId  // Ahora devolvemos solo el ID de la reserva
+      reservaId: reserva.reservaId  // Ahora devolvemos solo el ID de la reserva
     });
 
   } catch (error) {
