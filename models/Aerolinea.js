@@ -16,11 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Aerolinea.associate = (models) => {
-    // Una aerolínea tiene muchos aviones
-    Aerolinea.hasMany(models.Avion, {
-      foreignKey: 'id_aerolinea',  // La clave foránea en la tabla Avion
-      as: 'aviones',                // Alias para la relación
-    });
+    
     // Una aerolínea tiene muchos vuelos
     Aerolinea.hasMany(models.Vuelo, {
       foreignKey: 'id_aerolinea',  // La clave foránea en la tabla Vuelo (no id_vuelo)

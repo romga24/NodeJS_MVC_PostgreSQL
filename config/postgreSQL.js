@@ -29,7 +29,7 @@ const sequelize = new Sequelize({
    /*************Comandos para realizar modificaciones en las tablas de la base de datos*********/
    
    /*await sequelize.sync({ force: true });*/
-   /*await sequelize.sync({ alter: true }); */
+   /*await sequelize.sync({ alter: true });*/
 
   console.log('Todas las tablas sincronizadas correctamente');
   } catch (error) {

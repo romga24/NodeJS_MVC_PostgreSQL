@@ -9,7 +9,6 @@ const ClienteService = {
       const cliente = await Cliente.findOne({ where: { id_cliente } });
       return cliente || null;
     } catch (error) {
-      console.error("Error al obtener el cliente:", error);
       throw new Error("Error al obtener el cliente.");
     }
   },
@@ -19,7 +18,6 @@ const ClienteService = {
       data.contraseña = await bcrypt.hash(data.contraseña, 10);
       return await Cliente.create(data);
     } catch (error) {
-      console.error("Error al crear el cliente:", error);
       throw new Error("Error al crear el cliente.");
     }
   },
@@ -51,7 +49,6 @@ const ClienteService = {
       return cliente;
   
     } catch (error) {
-      console.error("Error en el login:", error);
       throw new Error("Error en el login.");
     }
   },
@@ -68,7 +65,6 @@ const ClienteService = {
       await cliente.update(data);
       return cliente;
     } catch (error) {
-      console.error("Error al actualizar el cliente:", error);
       throw new Error("Error al actualizar el cliente.");
     }
   },
@@ -80,7 +76,6 @@ const ClienteService = {
       await cliente.destroy();
       return true;
     } catch (error) {
-      console.error("Error al eliminar el cliente:", error);
       throw new Error("Error al eliminar el cliente.");
     }
   },
