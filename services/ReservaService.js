@@ -5,6 +5,7 @@ const generarLocalizador = require('./../utils/generarLocalizador');
 const ReservaService = {  
 
   async realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros) {
+    
     try {
       // Crear la reserva
       const reserva = await this.crearReserva(id_cliente);

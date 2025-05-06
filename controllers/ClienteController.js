@@ -3,7 +3,6 @@ const generarToken = require('./../middlewares/auth');
 const crypto = require("crypto");
 require("dotenv").config();
 
-//okk
 exports.getClienteById = async (req, res) => {
   try {
     const id_cliente = req.user.sub;
@@ -15,7 +14,6 @@ exports.getClienteById = async (req, res) => {
   }
 };
 
-//okk
 exports.createCliente = async (req, res) => {
   try {
     const { nombre, apellidos, email, telefono, nif, contraseña, nombre_usuario } = req.body;
@@ -32,7 +30,6 @@ exports.createCliente = async (req, res) => {
   }
 };
 
-//ok
 exports.loginCliente = async (req, res) => { 
   try {
     const { usuarioOEmail, contraseña } = req.body;

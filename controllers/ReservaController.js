@@ -32,8 +32,7 @@ exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
     const id_cliente = req.user.sub;
     const { codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros } = req.body;
 
-    // Validar que los datos sean correctos
-    if (!id_cliente || !codigo_vuelo_ida || !codigo_vuelo_vuelta || !Array.isArray(pasajeros) || pasajeros.length === 0) {
+    if (!id_cliente || !codigo_vuelo_ida || !Array.isArray(pasajeros) || pasajeros.length === 0) {
       return res.status(400).json({ error: 'Datos inválidos: Faltan datos necesarios o pasajeros vacíos.' });
     }
 
