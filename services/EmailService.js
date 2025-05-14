@@ -83,7 +83,36 @@ const EmailService = {
         <td style="padding: 10px; border: 1px solid #ddd;">${value}</td>
       </tr>
     `;
-  }
+  },
+
+
+  async enviarCodigoVerificacion(email, nombre_usuario, codigo) {
+    try {
+      const html = `
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+          <p style="font-size: 18px;">Hola <strong>${nombre_usuario}</strong>,</p>
+          <p style="font-size: 16px;">Hemos recibido una solicitud para verificar tu identidad y poder cambiar tu contraseña. Tu código de verificación es:</p>
+          <div style="font-size: 28px; font-weight: bold; color: #1a73e8; margin: 20px 0;">${codigo}</div>
+          <p style="font-size: 14px;">Este código expirará en 5 minutos. Si no has solicitado esta verificación, puedes ignorar este mensaje.</p>
+          <p style="margin-top: 20px; font-size: 16px;">Atentamente,<br><strong>AirLink</strong></p>
+        </div>
+      `;
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Tu código de verificación - AirLink",
+        html
+      };
+
+      await transporter.sendMail(mailOptions);
+      return { success: true, message: "Correo de verificación enviado correctamente" };
+    } catch (error) {
+      console.error("Error al enviar el correo de verificación:", error);
+      throw error;
+    }
+  },
+
 };
 
 module.exports = EmailService;

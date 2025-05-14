@@ -27,49 +27,49 @@ exports.realizarReserva = async (req, res) => {
 };
 
 
-exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
-  try {
-    const id_cliente = req.user.sub;
-    const { codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros } = req.body;
+// exports.realizarReservaConAsignacionAleatoria = async (req, res) => {
+//   try {
+//     const id_cliente = req.user.sub;
+//     const { codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros } = req.body;
 
-    if (!id_cliente || !codigo_vuelo_ida || !Array.isArray(pasajeros) || pasajeros.length === 0) {
-      return res.status(400).json({ error: 'Datos inválidos: Faltan datos necesarios o pasajeros vacíos.' });
-    }
+//     if (!id_cliente || !codigo_vuelo_ida || !Array.isArray(pasajeros) || pasajeros.length === 0) {
+//       return res.status(400).json({ error: 'Datos inválidos: Faltan datos necesarios o pasajeros vacíos.' });
+//     }
 
-    // Obtener la distribución de asientos de los vuelos
-    const distribucionIda = await AsientoService.getAllAsientos(codigo_vuelo_ida);
-    const distribucionVuelta = await AsientoService.getAllAsientos(codigo_vuelo_vuelta);
+//     // Obtener la distribución de asientos de los vuelos
+//     const distribucionIda = await AsientoService.getAllAsientos(codigo_vuelo_ida);
+//     const distribucionVuelta = await AsientoService.getAllAsientos(codigo_vuelo_vuelta);
 
-    // Asignar asientos aleatorios a cada pasajero
-    for (const pasajero of pasajeros) {
-      // Asiento de ida
-      const asientoIda = ReservaService.obtenerAsientoAleatorio(distribucionIda.distribucion_asientos);
-      pasajero.ida.fila = asientoIda.fila;
-      pasajero.ida.columna = asientoIda.columna;
-      pasajero.ida.codigo_asiento = asientoIda.codigo_asiento;
+//     // Asignar asientos aleatorios a cada pasajero
+//     for (const pasajero of pasajeros) {
+//       // Asiento de ida
+//       const asientoIda = ReservaService.obtenerAsientoAleatorio(distribucionIda.distribucion_asientos);
+//       pasajero.ida.fila = asientoIda.fila;
+//       pasajero.ida.columna = asientoIda.columna;
+//       pasajero.ida.codigo_asiento = asientoIda.codigo_asiento;
 
-      const asientoVuelta = ReservaService.obtenerAsientoAleatorio(distribucionVuelta.distribucion_asientos);
-      pasajero.vuelta.fila = asientoVuelta.fila;
-      pasajero.vuelta.columna = asientoVuelta.columna;
-      pasajero.vuelta.codigo_asiento = asientoVuelta.codigo_asiento;
-    }
+//       const asientoVuelta = ReservaService.obtenerAsientoAleatorio(distribucionVuelta.distribucion_asientos);
+//       pasajero.vuelta.fila = asientoVuelta.fila;
+//       pasajero.vuelta.columna = asientoVuelta.columna;
+//       pasajero.vuelta.codigo_asiento = asientoVuelta.codigo_asiento;
+//     }
 
-    const reserva = await ReservaService.realizarReserva(
-      id_cliente,
-      codigo_vuelo_ida,
-      codigo_vuelo_vuelta,
-      pasajeros
-    );
+//     const reserva = await ReservaService.realizarReserva(
+//       id_cliente,
+//       codigo_vuelo_ida,
+//       codigo_vuelo_vuelta,
+//       pasajeros
+//     );
 
-    return res.status(201).json({
-      message: 'Reserva realizada con éxito',
-      reserva
-    });
+//     return res.status(201).json({
+//       message: 'Reserva realizada con éxito',
+//       reserva
+//     });
 
-  } catch (error) {
-    return res.status(500).json({ error: 'Error interno del servidor. No se pudo realizar la reserva.' });
-  }
-};
+//   } catch (error) {
+//     return res.status(500).json({ error: 'Error interno del servidor. No se pudo realizar la reserva.' });
+//   }
+// };
 
 // Obtener la reserva de un cliente
 exports.obtenerReservaCliente = async (req, res) => {

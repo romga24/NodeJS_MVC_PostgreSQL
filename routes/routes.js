@@ -13,11 +13,15 @@ const avionController = require("../controllers/AvionController");
 const { verificarToken, verificarAdmin } = require('./../middlewares/auth');
 
 /************************RUTA CLIENTE CONTROLLER*********************************/
-router.get("/clientes/perfil-cliente",  verificarToken, clienteController.getClienteById); //ok
-router.post("/clientes", clienteController.createCliente); //ok
-router.post("/clientes/login", clienteController.loginCliente); //ok
-router.put("/clientes/actualizar-datos-cliente", verificarToken, clienteController.updateCliente); //ok
-router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.deleteCliente); //ok
+router.get("/clientes/perfil-cliente",  verificarToken, clienteController.getClienteById); 
+router.post("/clientes", clienteController.createCliente); 
+router.post("/clientes/login", clienteController.loginCliente);
+router.put("/clientes/actualizar-datos-cliente", verificarToken, clienteController.updateCliente); 
+router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.deleteCliente); 
+
+router.post("/clientes/enviar-codigo", clienteController.enviarCodigoRecuperacion);
+router.post("/clientes/verificar-codigo", clienteController.verificarCodigoRecuperacion);
+router.post("/clientes/restablecer-contrasena", verificarToken, clienteController.restablecerContrasena);
 
 /************************RUTA VUELO CONTROLLER*********************************/
 router.post('/vuelos/buscador-vuelos', vueloController.getVuelosConFiltro);
@@ -41,7 +45,7 @@ router.get('/asientos/vuelo/:numero_vuelo', verificarToken, asientoController.ge
 
 /************************RUTA RESERVA CONTROLLER*********************************/
 router.put('/reservas/realizar-reserva', verificarToken, reservaController.realizarReserva);
-router.put('/reservas/realizar-reserva-aleatoria', verificarToken, reservaController.realizarReservaConAsignacionAleatoria);
+// router.put('/reservas/realizar-reserva-aleatoria', verificarToken, reservaController.realizarReservaConAsignacionAleatoria);
 router.get('/reservas/mis-reservas', verificarToken, reservaController.obtenerReservaCliente);
 
 
@@ -49,6 +53,6 @@ router.delete('/reservas/:id_reserva', verificarToken, reservaController.elimina
 router.delete('/reservas/:id_reserva/billetes/:id_billete', verificarToken, reservaController.eliminarBilleteDeReserva); // -> Elimina un billete asociado a una reserva
 
 /************************RUTA BILLETE CONTROLLER*********************************/
-router.get('/billetes/obtener-info-vuelo', billeteController.obtenerInfoPorLocalizador);
+// router.get('/billetes/obtener-info-vuelo', billeteController.obtenerInfoPorLocalizador);
 
 module.exports = router;

@@ -196,21 +196,22 @@ const ReservaService = {
     }
   },
 
-  obtenerAsientoAleatorio(distribucionAsientos) {   
-    const asientosDisponibles = []; 
-    for (const fila of distribucionAsientos) {
-      for (const asiento of fila.asientos) {
-        if (asiento.estado === 'disponible') {
-          asientosDisponibles.push(asiento);
-        }
-      }
-    } 
-    if (asientosDisponibles.length === 0) {
-      throw new Error('No hay asientos disponibles en este vuelo');
-    } 
-    const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
-    return asientosDisponibles[indexAleatorio];
-  }
+  // obtenerAsientoAleatorio(distribucionAsientos) {   
+  //   const asientosDisponibles = []; 
+  //   for (const fila of distribucionAsientos) {
+  //     for (const asiento of fila.asientos) {
+  //       if (asiento.estado === 'disponible') {
+  //         asientosDisponibles.push(asiento);
+  //       }
+  //     }
+  //   } 
+  //   if (asientosDisponibles.length === 0) {
+  //     throw new Error('No hay asientos disponibles en este vuelo');
+  //   } 
+  //   const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
+  //   return asientosDisponibles[indexAleatorio];
+  // }
+  
 };
 
 module.exports = ReservaService;
