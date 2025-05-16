@@ -1,0 +1,23 @@
+<!--Formato del correo con la informacion del billete que se envia al cliente-->
+<div style="margin-bottom: 40px;">
+  <h2 style="color: #005288;">
+    Detalles del vuelo - <%= pasajero.nombre %> <%= pasajero.apellidos %>
+  </h2>
+  <div class="logo" style="text-align: right; margin-bottom: 20px;">
+    <img src="<%= logoDataUrl %>" alt="Logo Aerolínea" style="height: 60px;" />
+  </div>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+    <tr><td><strong>Numero de vuelo</strong></td><td><%= vuelo.numero_vuelo %></td></tr>
+    <tr><td><strong>Aerolínea operadora</strong></td><td><%= billete.vuelo.aerolinea.nombre %></td></tr>
+    <tr><td><strong>Fecha de salida</strong></td><td><%= vuelo.fecha_salida %></td></tr>
+    <tr><td><strong>Fecha de llegada</strong></td><td><%= vuelo.fecha_llegada %></td></tr>
+    <tr><td><strong>Aeropuerto de origen</strong></td><td><%= vuelo.aeropuerto_origen.nombre %></td></tr>
+    <tr><td><strong>Aeropuerto de llegada</strong></td><td><%= vuelo.aeropuerto_destino.nombre %></td></tr>
+    <tr>
+      <td><strong>Asiento</strong></td>
+      <td><%= asiento.codigo_asiento %> (Fila: <%= asiento.fila %>, Columna: <%= asiento.columna %>)</td>
+    </tr>
+    <tr><td><strong>Precio</strong></td><td><%= precio %> EUR</td></tr>
+    <tr><td><strong>Localizador</strong></td><td><%= localizador %></td></tr>
+  </table>
+</div>

@@ -5,6 +5,7 @@ const routes = require("./routes/routes");
 const app = express();
 
 // Middleware para parsear JSON
+app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 

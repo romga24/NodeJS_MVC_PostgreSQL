@@ -24,7 +24,7 @@ const ClienteService = {
 
   async login(usuarioOEmail, password) {
     try {
-      const cliente = await ClienteService.getByEmailOUsuario(usuarioOEmail);
+      const cliente = await this.getByEmailOUsuario(usuarioOEmail);
       if (!cliente) return false;
       const isMatch = await bcrypt.compare(password, cliente.contraseña);
       if (!isMatch) {
@@ -78,8 +78,6 @@ const ClienteService = {
       throw new Error("Error al eliminar el cliente.");
     }
   }
-
- 
 
 };
 

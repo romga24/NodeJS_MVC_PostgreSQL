@@ -45,9 +45,8 @@ router.get('/asientos/vuelo/:numero_vuelo', verificarToken, asientoController.ge
 
 /************************RUTA RESERVA CONTROLLER*********************************/
 router.put('/reservas/realizar-reserva', verificarToken, reservaController.realizarReserva);
-// router.put('/reservas/realizar-reserva-aleatoria', verificarToken, reservaController.realizarReservaConAsignacionAleatoria);
 router.get('/reservas/mis-reservas', verificarToken, reservaController.obtenerReservaCliente);
-
+router.get('/reservas/:id_reserva/pdf',  verificarToken, reservaController.generarPdfVuelo);
 
 router.delete('/reservas/:id_reserva', verificarToken, reservaController.eliminarReservaCliente); // -> Eliminar la reserva completa del cliente 
 router.delete('/reservas/:id_reserva/billetes/:id_billete', verificarToken, reservaController.eliminarBilleteDeReserva); // -> Elimina un billete asociado a una reserva

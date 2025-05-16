@@ -1,15 +1,19 @@
-const { Reserva, Pasajero, Vuelo, Asiento, Billete } = require('../models');
+const { Reserva, Pasajero, Vuelo, Asiento, Billete, Aeropuerto, Aerolinea } = require('../models');
 const emailService = require("../services/EmailService");
+const fs = require('fs').promises;
+const path = require('path');
+const ejs = require('ejs');
 const generarLocalizador = require('./../utils/generarLocalizador');
 
-const ReservaService = {  
+
+const ReservaService = {
 
   async realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros) {
-    
+
     try {
-      // Crear la reserva
+
       const reserva = await this.crearReserva(id_cliente);
-  
+
       // Procesar cada pasajero
       for (const pasajero of pasajeros) {
         const [existingPasajero, created] = await Pasajero.findOrCreate({
@@ -21,12 +25,12 @@ const ReservaService = {
             telefono: pasajero.telefono,
           }
         });
-  
+
         const pasajeroId = existingPasajero.id_pasajero;
-  
+
         // Buscar el vuelo de ida
         const vueloIda = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_ida } });
-  
+
         // Reservar asiento de ida
         const asientoIda = await Asiento.create({
           id_avion: vueloIda.id_avion,
@@ -36,7 +40,7 @@ const ReservaService = {
           codigo_asiento: pasajero.ida.codigo_asiento,
           estado: 'reservado'
         });
-  
+
         // Crear el billete de ida
         await Billete.create({
           id_reserva: reserva.id_reserva,
@@ -46,12 +50,12 @@ const ReservaService = {
           localizador: generarLocalizador(),
           precio: pasajero.ida.precio
         });
-  
+
         // Si hay vuelo de vuelta, procesarlo
         if (codigo_vuelo_vuelta) {
-          
+
           const vueloVuelta = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_vuelta } });
-  
+
           const asientoVuelta = await Asiento.create({
             id_avion: vueloVuelta.id_avion,
             id_vuelo: vueloVuelta.id_vuelo,
@@ -60,7 +64,7 @@ const ReservaService = {
             codigo_asiento: pasajero.vuelta.codigo_asiento,
             estado: 'reservado'
           });
-  
+
           await Billete.create({
             id_reserva: reserva.id_reserva,
             id_vuelo: vueloVuelta.id_vuelo,
@@ -71,24 +75,24 @@ const ReservaService = {
           });
         }
       }
-      
+
       await emailService.enviarCorreoVuelo(reserva.id_reserva);
-      
-      return reserva; 
+
+      return reserva;
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
       throw error;
     }
   },
-  
+
   // Crear la reserva
   async crearReserva(id_cliente) {
-    return await Reserva.create({ 
-      id_cliente: id_cliente, 
-      fecha_reserva: new Date() 
+    return await Reserva.create({
+      id_cliente: id_cliente,
+      fecha_reserva: new Date()
     });
   },
-  
+
   async eliminarBillete(id_cliente, id_reserva, id_billete) {
     try {
       const reserva = await Reserva.findOne({
@@ -97,7 +101,7 @@ const ReservaService = {
       const billete = await Billete.findOne({
         where: { id_billete, id_reserva },
       });
-      const asiento = await Asiento.findByPk(billete.id_asiento);      
+      const asiento = await Asiento.findByPk(billete.id_asiento);
       if (asiento) {
         await asiento.destroy();
       }
@@ -113,61 +117,61 @@ const ReservaService = {
     }
   },
 
-    // Obtener reservas del cliente
-    async obtenerReservasPorCliente(id_cliente) {
-      try {
-        const reservas = await Reserva.findAll({
-          where: { id_cliente },
-          include: [
-            {
-              model: Billete,
-              as: 'billetes', // Asegúrate de usar el alias correcto
-              include: [
-                {
-                  model: Vuelo,
-                  as: 'vuelo', // Alias correcto en las asociaciones
-                  attributes: ['numero_vuelo', 'fecha_salida', 'fecha_llegada', 'precio_vuelo'] // Solo los campos relevantes
-                },
-                {
-                  model: Asiento,
-                  as: 'asiento',
-                  attributes: ['codigo_asiento', 'fila', 'columna', 'clase'] // Solo los campos relevantes
-                },
-                {
-                  model: Pasajero,
-                  as: 'pasajero',
-                  attributes: ['nombre', 'apellidos', 'email', 'telefono', 'nif'] // Solo los campos relevantes
-                }
-              ]
-            }
-          ],
-          order: [['fecha_reserva', 'DESC']],
-        });
-    
-        // Mapeo de la respuesta para formatear el JSON como lo quieres
-        const reservasFormateadas = reservas.map((reserva) => {
-          return {
-            id_reserva: reserva.id_reserva,
-            fecha_reserva: reserva.fecha_reserva,
-            billetes: reserva.billetes.map((billete) => {
-              return {
-                id_billete: billete.id_billete,
-                localizador: billete.localizador,
-                precio: billete.precio,
-                vuelo: billete.vuelo,
-                asiento: billete.asiento,
-                pasajero: billete.pasajero
-              };
-            })
-          };
-        });
-    
-        return reservasFormateadas;    
-      } catch (error) {
-        console.error('Error al obtener las reservas:', error);
-        throw error;
-      }
-    },
+  // Obtener reservas del cliente
+  async obtenerReservasPorCliente(id_cliente) {
+    try {
+      const reservas = await Reserva.findAll({
+        where: { id_cliente },
+        include: [
+          {
+            model: Billete,
+            as: 'billetes', // Asegúrate de usar el alias correcto
+            include: [
+              {
+                model: Vuelo,
+                as: 'vuelo', // Alias correcto en las asociaciones
+                attributes: ['numero_vuelo', 'fecha_salida', 'fecha_llegada', 'precio_vuelo'] // Solo los campos relevantes
+              },
+              {
+                model: Asiento,
+                as: 'asiento',
+                attributes: ['codigo_asiento', 'fila', 'columna', 'clase'] // Solo los campos relevantes
+              },
+              {
+                model: Pasajero,
+                as: 'pasajero',
+                attributes: ['nombre', 'apellidos', 'email', 'telefono', 'nif'] // Solo los campos relevantes
+              }
+            ]
+          }
+        ],
+        order: [['fecha_reserva', 'DESC']],
+      });
+
+      // Mapeo de la respuesta para formatear el JSON como lo quieres
+      const reservasFormateadas = reservas.map((reserva) => {
+        return {
+          id_reserva: reserva.id_reserva,
+          fecha_reserva: reserva.fecha_reserva,
+          billetes: reserva.billetes.map((billete) => {
+            return {
+              id_billete: billete.id_billete,
+              localizador: billete.localizador,
+              precio: billete.precio,
+              vuelo: billete.vuelo,
+              asiento: billete.asiento,
+              pasajero: billete.pasajero
+            };
+          })
+        };
+      });
+
+      return reservasFormateadas;
+    } catch (error) {
+      console.error('Error al obtener las reservas:', error);
+      throw error;
+    }
+  },
 
   // Eliminar reserva del cliente
   async eliminarReserva(id_cliente, id_reserva) {
@@ -211,7 +215,46 @@ const ReservaService = {
   //   const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
   //   return asientosDisponibles[indexAleatorio];
   // }
-  
+
+  async obtenerReservaConDetalles(id_reserva) {
+    return Reserva.findOne({
+      where: { id_reserva },
+      include: [
+        {
+          model: Billete,
+          as: 'billetes',
+          include: [
+            {
+              model: Vuelo,
+              as: 'vuelo',
+              include: [
+                { model: Aeropuerto, as: 'aeropuerto_origen' },
+                { model: Aeropuerto, as: 'aeropuerto_destino' },
+                { model: Aerolinea, as: 'aerolinea' }
+              ]
+            },
+            { model: Asiento, as: 'asiento' },
+            { model: Pasajero, as: 'pasajero' }
+          ]
+        }
+      ]
+    });
+  },
+
+  async renderPdfReserva(reserva) {
+    const templatePath = path.join(__dirname, '../templates/pdfs/detalleBilletePDF.ejs');
+
+    const logoPath = path.join(__dirname, '../public/images/airlink_logo.png');
+    const logoBuffer = await fs.readFile(logoPath);
+    const logoDataUrl = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+
+    return ejs.renderFile(templatePath, {
+      id_reserva: reserva.id,
+      billetes: reserva.billetes,
+      logoDataUrl
+    });
+  }
+
 };
 
 module.exports = ReservaService;

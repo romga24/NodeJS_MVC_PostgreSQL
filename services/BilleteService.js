@@ -2,7 +2,6 @@ const { Billete, Reserva, Pasajero, Vuelo, Aerolinea, Aeropuerto, Avion, Asiento
 const { Op } = require('sequelize');
 
 const BilleteService = {
-
   async obtenerInfoBillete(localizador, apellido) {
     try {
       if (!localizador || !apellido) {
@@ -25,7 +24,7 @@ const BilleteService = {
                 [Op.iLike]: `%${apellido}%`
               }
             },
-            required: true 
+            required: true
           },
           {
             model: Vuelo,
@@ -47,7 +46,7 @@ const BilleteService = {
       if (!billete) {
         return { success: false, message: 'Billete no encontrado con ese localizador o apellido.' };
       }
-  
+
       return {
         success: true,
         data: {

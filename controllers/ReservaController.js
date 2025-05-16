@@ -1,6 +1,10 @@
 const ReservaService = require('../services/ReservaService');
 const AsientoService = require('../services/AsientoService');
+const VueloService = require('../services/VueloService');
 
+const puppeteer = require('puppeteer');
+const fs = require('fs').promises; 
+const path = require('path');
 
 exports.realizarReserva = async (req, res) => { 
   try {
@@ -23,6 +27,42 @@ exports.realizarReserva = async (req, res) => {
   } catch (error) {
     console.error('Error al realizar la reserva:', error);
     return res.status(500).json({ error: 'Error interno del servidor. No se pudo realizar la reserva.' });
+  }
+};
+
+exports.generarPdfVuelo = async (req, res) => {
+  const { id_reserva } = req.params;
+
+  try {
+    const reserva = await ReservaService.obtenerReservaConDetalles(id_reserva);
+    if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
+
+    // Renderizar el HTML completo para PDF
+    const fullHtml = await ReservaService.renderPdfReserva(reserva);
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' }
+    });
+
+    await browser.close();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="reserva_${id_reserva}.pdf"`);
+    res.end(pdfBuffer);
+
+  } catch (error) {
+    console.error('Error generando PDF:', error);
+    res.status(500).json({ error: 'Error generando PDF' });
   }
 };
 
