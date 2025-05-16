@@ -4,9 +4,9 @@ const ejs = require('ejs');
 const path = require('path');
 
 const EmailService = {
-  
+
   async enviarCorreoVuelo(id_reserva) {
-    try {  
+    try {
       const reserva = await ReservaService.obtenerReservaConDetalles(id_reserva);
       if (!reserva) throw new Error('Reserva no encontrada');
       for (const billete of reserva.billetes) {
@@ -26,28 +26,45 @@ const EmailService = {
     const logoBuffer = fs.readFileSync(logoPath);
     const logoDataUrl = `data:image/png;base64,${logoBuffer.toString('base64')}`;
 
-    try{
-       const html = await ejs.renderFile(templatePath, { billete, logoDataUrl });
-       return {
-          from: process.env.EMAIL_USER,
-          to: billete.pasajero.email,
-          subject: "Detalles de tu vuelo - AirLink",
-          html
-       };
-    }catch (error){
-        throw error;
-    } 
+    try {
+      const html = await ejs.renderFile(templatePath, { billete, logoDataUrl });
+      return {
+        from: process.env.EMAIL_USER,
+        to: billete.pasajero.email,
+        subject: "Detalles de tu vuelo - AirLink",
+        html
+      };
+    } catch (error) {
+      throw error;
+    }
   },
 
   async renderCodigoVerificacionHtml(nombre_usuario, codigo) {
-    const templatePath = path.join(__dirname, '../templates/codigoVerificacion.ejs');
+    const templatePath = path.join(__dirname, '../templates/emails/codigoVerificacion.ejs');
     try {
       const html = await ejs.renderFile(templatePath, { nombre_usuario, codigo });
       return html;
     } catch (error) {
       throw error;
     }
-}
+  },
+
+  async enviarCodigoVerificacion(email, nombre_usuario, codigo) {
+    try {
+      const html = await this.renderCodigoVerificacionHtml(nombre_usuario, codigo);
+
+      const mailOptions = {
+        from: `"Soporte de Vuelos" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Código de verificación para recuperar tu contraseña",
+        html, // contenido generado por EJS
+      };
+
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      throw new Error("Error al enviar el código de verificación por correo");
+    }
+  }
 };
 
 module.exports = EmailService;

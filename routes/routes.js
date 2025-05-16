@@ -51,7 +51,5 @@ router.get('/reservas/:id_reserva/pdf',  verificarToken, reservaController.gener
 router.delete('/reservas/:id_reserva', verificarToken, reservaController.eliminarReservaCliente); // -> Eliminar la reserva completa del cliente 
 router.delete('/reservas/:id_reserva/billetes/:id_billete', verificarToken, reservaController.eliminarBilleteDeReserva); // -> Elimina un billete asociado a una reserva
 
-/************************RUTA BILLETE CONTROLLER*********************************/
-// router.get('/billetes/obtener-info-vuelo', billeteController.obtenerInfoPorLocalizador);
 
 module.exports = router;
