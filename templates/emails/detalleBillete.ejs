@@ -1,23 +1,56 @@
-<!--Formato del correo con la informacion del billete que se envia al cliente-->
-<div style="margin-bottom: 40px;">
-  <h2 style="color: #005288;">
-    Detalles del vuelo - <%= pasajero.nombre %> <%= pasajero.apellidos %>
-  </h2>
-  <div class="logo" style="text-align: right; margin-bottom: 20px;">
-    <img src="<%= logoDataUrl %>" alt="Logo Aerolínea" style="height: 60px;" />
+<!-- Correo con la información del billete -->
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <h1 style="color: #005288; margin: 0; font-size: 24px;">AirLink</h1>
+    <p style="color: #333; font-size: 16px;">Confirmación de vuelo</p>
   </div>
+
+  <h2 style="color: #005288; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+    Detalles del vuelo - <%= billete.pasajero.nombre %> <%= billete.pasajero.apellidos %>
+  </h2>
+
   <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-    <tr><td><strong>Numero de vuelo</strong></td><td><%= vuelo.numero_vuelo %></td></tr>
-    <tr><td><strong>Aerolínea operadora</strong></td><td><%= billete.vuelo.aerolinea.nombre %></td></tr>
-    <tr><td><strong>Fecha de salida</strong></td><td><%= vuelo.fecha_salida %></td></tr>
-    <tr><td><strong>Fecha de llegada</strong></td><td><%= vuelo.fecha_llegada %></td></tr>
-    <tr><td><strong>Aeropuerto de origen</strong></td><td><%= vuelo.aeropuerto_origen.nombre %></td></tr>
-    <tr><td><strong>Aeropuerto de llegada</strong></td><td><%= vuelo.aeropuerto_destino.nombre %></td></tr>
     <tr>
-      <td><strong>Asiento</strong></td>
-      <td><%= asiento.codigo_asiento %> (Fila: <%= asiento.fila %>, Columna: <%= asiento.columna %>)</td>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Número de vuelo</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.numero_vuelo %></td>
     </tr>
-    <tr><td><strong>Precio</strong></td><td><%= precio %> EUR</td></tr>
-    <tr><td><strong>Localizador</strong></td><td><%= localizador %></td></tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Aerolínea operadora</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.aerolinea.nombre %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Fecha de salida</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.fecha_salida %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Fecha de llegada</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.fecha_llegada %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Aeropuerto de origen</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.aeropuerto_origen.nombre %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Aeropuerto de llegada</td>
+      <td style="padding: 8px; color: #333;"><%= billete.vuelo.aeropuerto_destino.nombre %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Asiento</td>
+      <td style="padding: 8px; color: #333;">
+        <%= billete.asiento.codigo_asiento %> (Fila: <%= billete.asiento.fila %>, Columna: <%= billete.asiento.columna %>)
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Precio</td>
+      <td style="padding: 8px; color: #333;"><%= billete.precio %> EUR</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; font-weight: bold; color: #555;">Localizador</td>
+      <td style="padding: 8px; color: #333;"><%= billete.localizador %></td>
+    </tr>
   </table>
+
+  <div style="margin-top: 30px; text-align: center; font-size: 14px; color: #777;">
+    Gracias por volar con nosotros. ¡Buen viaje!
+  </div>
 </div>

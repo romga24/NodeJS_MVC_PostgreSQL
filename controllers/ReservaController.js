@@ -1,6 +1,7 @@
 const ReservaService = require('../services/ReservaService');
 const AsientoService = require('../services/AsientoService');
 const VueloService = require('../services/VueloService');
+const emailService = require("../services/EmailService");
 
 const puppeteer = require('puppeteer');
 const fs = require('fs').promises; 
@@ -16,8 +17,8 @@ exports.realizarReserva = async (req, res) => {
     }
 
     // Realizar la reserva
-    const reserva = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
-
+  const reserva = await ReservaService.realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros);
+  await emailService.enviarCorreoVuelo(reserva.id_reserva);
     // Devolver el id de la reserva con un mensaje de éxito
     return res.status(201).json({
       message: 'Reserva realizada con éxito y correos enviados',

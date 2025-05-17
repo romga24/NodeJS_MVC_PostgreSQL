@@ -76,8 +76,6 @@ const ReservaService = {
         }
       }
 
-      await emailService.enviarCorreoVuelo(reserva.id_reserva);
-
       return reserva;
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
@@ -85,6 +83,7 @@ const ReservaService = {
     }
   },
 
+  
   // Crear la reserva
   async crearReserva(id_cliente) {
     return await Reserva.create({
