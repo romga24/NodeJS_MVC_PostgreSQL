@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     
     // Una aerolínea tiene muchos vuelos
     Aerolinea.hasMany(models.Vuelo, {
-      foreignKey: 'id_aerolinea',  // La clave foránea en la tabla Vuelo (no id_vuelo)
-      as: 'vuelos',                 // Alias para la relación
+      foreignKey: 'id_aerolinea', 
+      as: 'vuelos',                 
     });
   };
 

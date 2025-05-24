@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING, 
         allowNull: false }
     },{
-        freezeTableName: true  // Evita que Sequelize pluralice el nombre de la tabla
+        freezeTableName: true  
       });
   
     // Relaciones

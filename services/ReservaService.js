@@ -11,7 +11,7 @@ const ReservaService = {
   async realizarReserva(id_cliente, codigo_vuelo_ida, codigo_vuelo_vuelta, pasajeros) {
 
     try {
-
+      
       const reserva = await this.crearReserva(id_cliente);
 
       // Procesar cada pasajero
@@ -30,7 +30,7 @@ const ReservaService = {
 
         // Buscar el vuelo de ida
         const vueloIda = await Vuelo.findOne({ where: { numero_vuelo: codigo_vuelo_ida } });
-
+        
         // Reservar asiento de ida
         const asientoIda = await Asiento.create({
           id_avion: vueloIda.id_avion,
@@ -177,14 +177,17 @@ const ReservaService = {
     try {
       const reserva = await Reserva.findOne({
         where: { id_reserva, id_cliente },
-        include: [Billete]
+        include: {
+          model: Billete,
+          as: 'billetes'
+        }
       });
 
       if (!reserva) {
         return { success: false, message: 'Reserva no encontrada.' };
       }
       // Liberar asientos y eliminar billetes relacionados
-      for (const billete of reserva.Billetes) {
+      for (const billete of reserva.billetes) {
         const asiento = await Asiento.findByPk(billete.id_asiento);
         if (asiento) {
           await asiento.destroy();
@@ -198,22 +201,6 @@ const ReservaService = {
       throw error;
     }
   },
-
-  // obtenerAsientoAleatorio(distribucionAsientos) {   
-  //   const asientosDisponibles = []; 
-  //   for (const fila of distribucionAsientos) {
-  //     for (const asiento of fila.asientos) {
-  //       if (asiento.estado === 'disponible') {
-  //         asientosDisponibles.push(asiento);
-  //       }
-  //     }
-  //   } 
-  //   if (asientosDisponibles.length === 0) {
-  //     throw new Error('No hay asientos disponibles en este vuelo');
-  //   } 
-  //   const indexAleatorio = Math.floor(Math.random() * asientosDisponibles.length);
-  //   return asientosDisponibles[indexAleatorio];
-  // }
 
   async obtenerReservaConDetalles(id_reserva) {
     return Reserva.findOne({
@@ -253,7 +240,6 @@ const ReservaService = {
       logoDataUrl
     });
   }
-
 };
 
 module.exports = ReservaService;

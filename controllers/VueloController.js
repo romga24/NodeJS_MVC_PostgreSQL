@@ -7,15 +7,15 @@ exports.createVuelo = async (req, res) => {
     if (!numero_vuelo || !fecha_salida || !fecha_llegada || !id_aeropuerto_origen || !id_aeropuerto_destino || !id_avion || !id_aerolinea || !precio_vuelo) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
-    const nuevoVuelo = await VueloService.createVuelo({
-      numero_vuelo,
-      fecha_salida,
-      fecha_llegada,
-      id_aeropuerto_origen,
-      id_aeropuerto_destino,
-      id_avion,
-      id_aerolinea,
-      precio_vuelo
+    await VueloService.createVuelo({
+        numero_vuelo,
+        fecha_salida,
+        fecha_llegada,
+        id_aeropuerto_origen,
+        id_aeropuerto_destino,
+        id_avion,
+        id_aerolinea,
+        precio_vuelo
     });
     res.status(201).json();
   } catch (err) {

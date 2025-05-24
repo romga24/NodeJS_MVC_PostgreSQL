@@ -1,5 +1,26 @@
-
-
+/*********************************************************
+ * Configuración y sincronización de la base de datos con Sequelize
+ *
+ * Este módulo establece la conexión a una base de datos PostgreSQL 
+ * utilizando la librería 'sequelize'. Las credenciales y parámetros 
+ * de conexión se definen mediante variables de entorno.
+ *
+ * Funcionalidad principal:
+ * - Crea una instancia de Sequelize con soporte para SSL.
+ * - Verifica la conexión con la base de datos.
+ * - Ofrece opciones para sincronizar los modelos definidos 
+ *   con las tablas de la base de datos (sync).
+ *
+ * Variables de entorno necesarias: DB_HOST, DB_PORT, DB_USER, DB_PASSWORD y DB_NAME
+ *
+ * Opciones de sincronización disponibles (comentadas por defecto):
+ * - force: true → Elimina y recrea todas las tablas.
+ * - alter: true → Ajusta las tablas existentes sin eliminar datos.
+ *
+ * Este archivo exporta la instancia de Sequelize para ser reutilizada 
+ * en otros módulos del proyecto.
+ *
+ *********************************************************/
 const { Sequelize } = require('sequelize');
 require("dotenv").config();
 

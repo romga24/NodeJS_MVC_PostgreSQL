@@ -19,6 +19,7 @@ router.post("/clientes/login", clienteController.loginCliente);
 router.put("/clientes/actualizar-datos-cliente", verificarToken, clienteController.updateCliente); 
 router.delete("/clientes/:eliminar-cuenta", verificarToken, clienteController.deleteCliente); 
 
+/******APIs necesarias para la recuperacion de la contraseña*********/
 router.post("/clientes/enviar-codigo", clienteController.enviarCodigoRecuperacion);
 router.post("/clientes/verificar-codigo", clienteController.verificarCodigoRecuperacion);
 router.post("/clientes/restablecer-contrasena", verificarToken, clienteController.restablecerContrasena);
