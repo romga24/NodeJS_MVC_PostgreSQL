@@ -1,163 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title></title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #222;
-      padding: 30px 40px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 30px;
-      border-bottom: 3px solid #0077b6;
-      padding-bottom: 10px;
-    }
-
-    .logo img {
-      width: 130px;
-      height: auto;
-      margin-right: 20px;
-    }
-
-    .aerolinea-nombre {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #023e8a;
-    }
-
-    h2 {
-      color: #0077b6;
-      margin-bottom: 20px;
-      border-left: 5px solid #0077b6;
-      padding-left: 10px;
-      font-weight: 700;
-    }
-
-    .billete {
-      background: white;
-      padding: 25px 30px;
-      margin-bottom: 35px;
-      border-radius: 10px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.3s ease;
-      page-break-after: always;
-    }
-
-    .billete:hover {
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .billete:last-child {
-      page-break-after: auto;
-    }
-
-    .fila {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #e0e0e0;
-      font-size: 1rem;
-    }
-
-    .fila:last-child {
-      border-bottom: none;
-    }
-
-    .label {
-      font-weight: 600;
-      color: #555;
-      max-width: 45%;
-    }
-
-    .valor {
-      color: #444;
-      max-width: 50%;
-      text-align: right;
-      font-weight: 500;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="header">
-    <div class="logo">
-      <img src="<%= logoDataUrl %>" alt="Logo Aerolínea" />
+ <div style="margin-bottom: 20px; border-bottom: 2px solid #0077b6; padding-bottom: 10px; display: block;">
+    <div style="display: inline-block; vertical-align: middle;">
+      <img src="<%= logoDataUrl %>" alt="Logo Aerolínea" style="width: 100px; margin-right: 15px;" />
     </div>
-    <div class="aerolinea-nombre">
+    <div style="display: inline-block; vertical-align: middle; font-size: 1.2rem; font-weight: bold; color: #023e8a;">
       AirLink
     </div>
   </div>
 
-  <% billetes.forEach(billete=> { %>
-    <div class="billete">
-      <h2>Detalles del vuelo - <%= billete.pasajero.nombre %>
-          <%= billete.pasajero.apellidos %>
+  <% billetes.forEach(billete => { %>
+    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid;">
+      <h2 style="color: #0077b6; margin-bottom: 10px; font-size: 1rem; border-left: 4px solid #0077b6; padding-left: 8px;">
+        Detalles del vuelo - <%= billete.pasajero.nombre %> <%= billete.pasajero.apellidos %>
       </h2>
-
-      <div class="fila">
-        <div class="label">Numero de vuelo</div>
-        <div class="valor">
-          <%= billete.vuelo.numero_vuelo %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Fecha de salida</div>
-        <div class="valor">
-          <%= new Date(billete.vuelo.fecha_salida).toLocaleString('es-ES', { dateStyle: 'medium' , timeStyle: 'short' })
-            %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Fecha de llegada</div>
-        <div class="valor">
-          <%= new Date(billete.vuelo.fecha_llegada).toLocaleString('es-ES', { dateStyle: 'medium' , timeStyle: 'short'
-            }) %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Aeropuerto de origen</div>
-        <div class="valor">
-          <%= billete.vuelo.aeropuerto_origen.nombre %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Aeropuerto de llegada</div>
-        <div class="valor">
-          <%= billete.vuelo.aeropuerto_destino.nombre %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Asiento</div>
-        <div class="valor">
-          <%= billete.asiento.codigo_asiento %> (Fila: <%= billete.asiento.fila %>, Columna: <%= billete.asiento.columna
-                %>)
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Precio</div>
-        <div class="valor">
-          <%= billete.precio %> EUR
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Localizador</div>
-        <div class="valor">
-          <%= billete.localizador %>
-        </div>
-      </div>
-      <div class="fila">
-        <div class="label">Aerolínea operadora</div>
-        <div class="valor">
-          <%= billete.vuelo.aerolinea.nombre || 'N/D' %>
-        </div>
-      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd; width: 40%;">Número de vuelo</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;"><%= billete.vuelo.numero_vuelo %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Fecha de salida</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;">
+            <%= new Date(billete.vuelo.fecha_salida).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Fecha de llegada</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;">
+            <%= new Date(billete.vuelo.fecha_llegada).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Aeropuerto de origen</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;"><%= billete.vuelo.aeropuerto_origen.nombre %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Aeropuerto de llegada</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;"><%= billete.vuelo.aeropuerto_destino.nombre %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Asiento</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;">
+            <%= billete.asiento.codigo_asiento %> (Fila: <%= billete.asiento.fila %>, Columna: <%= billete.asiento.columna %>)
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Precio</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;"><%= billete.precio %> EUR</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px; border-bottom: 1px solid #ddd;">Localizador</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #ddd;"><%= billete.localizador %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; background-color: #f2f2f2; padding: 6px 8px;">Aerolínea operadora</td>
+          <td style="padding: 6px 8px;"><%= billete.vuelo.aerolinea.nombre || 'N/D' %></td>
+        </tr>
+      </table>
     </div>
-    <% }) %>
-</body>
-
-</html>
+  <% }) %>
