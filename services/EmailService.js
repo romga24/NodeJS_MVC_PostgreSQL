@@ -52,10 +52,10 @@ const EmailService = {
       const html = await this.renderCodigoVerificacionHtml(nombre_usuario, codigo);
 
       const mailOptions = {
-        from: `"Soporte de Vuelos" <${process.env.EMAIL_USER}>`,
+        from: "Soporte de Vuelos",
         to: email,
         subject: "Código de verificación para recuperar tu contraseña",
-        html, // contenido generado por EJS
+        html, 
       };
 
       await transporter.sendMail(mailOptions);
