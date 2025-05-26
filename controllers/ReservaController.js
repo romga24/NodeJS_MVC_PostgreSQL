@@ -41,7 +41,14 @@ exports.generarPdfVuelo = async (req, res) => {
     const fullHtml = await ReservaService.renderPdfReserva(reserva);
 
     pdf.create(fullHtml, {
-      format: 'A4',
+      format: 'A4',              // Papel tamaño A4 (210mm x 297mm)
+      orientation: 'portrait',   // Vertical
+      border: {
+        top: '10mm',
+        right: '10mm',
+        bottom: '10mm',
+        left: '10mm'
+      },
       type: 'pdf',
       // puedes agregar otras opciones como `timeout`, `footer`, etc.
     }).toBuffer((err, buffer) => {
