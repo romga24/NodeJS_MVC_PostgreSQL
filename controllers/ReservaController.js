@@ -42,12 +42,6 @@ exports.generarPdfVuelo = async (req, res) => {
 
     pdf.create(fullHtml, {
       format: 'A4',
-      border: {
-        top: '20mm',
-        right: '15mm',
-        bottom: '20mm',
-        left: '15mm'
-      },
       type: 'pdf',
       // puedes agregar otras opciones como `timeout`, `footer`, etc.
     }).toBuffer((err, buffer) => {
