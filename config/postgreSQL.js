@@ -14,11 +14,9 @@
  * Variables de entorno necesarias: DB_HOST, DB_PORT, DB_USER, DB_PASSWORD y DB_NAME
  *
  * Opciones de sincronización disponibles (comentadas por defecto):
- * - force: true → Elimina y recrea todas las tablas.
- * - alter: true → Ajusta las tablas existentes sin eliminar datos.
+ * - force: true ->  Elimina y recrea todas las tablas.
+ * - alter: true ->  Ajusta las tablas existentes sin eliminar datos.
  *
- * Este archivo exporta la instancia de Sequelize para ser reutilizada 
- * en otros módulos del proyecto.
  *
  *********************************************************/
 const { Sequelize } = require('sequelize');
