@@ -148,6 +148,7 @@ const ReservaService = {
       });
 
       // Mapeo de la respuesta para formatear el JSON como lo quieres
+      
       const reservasFormateadas = reservas.map((reserva) => {
         return {
           id_reserva: reserva.id_reserva,
