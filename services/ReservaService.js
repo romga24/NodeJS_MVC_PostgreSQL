@@ -129,7 +129,7 @@ const ReservaService = {
               {
                 model: Vuelo,
                 as: 'vuelo', // Alias correcto en las asociaciones
-                attributes: ['numero_vuelo', 'fecha_salida', 'fecha_llegada', 'precio_vuelo'] // Solo los campos relevantes
+                attributes: ['numero_vuelo', 'fecha_salida', 'fecha_llegada', 'precio_vuelo', 'estado_vuelo'] // Solo los campos relevantes
               },
               {
                 model: Asiento,
