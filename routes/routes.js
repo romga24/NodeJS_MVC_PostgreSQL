@@ -30,7 +30,7 @@ router.get('/vuelos', vueloController.getAllVuelos); //ok
 
 /*Solo el administrador*/
 router.post('/vuelos/crear', verificarToken, verificarAdmin, vueloController.createVuelo);
-router.put('/vuelos/modificar-estado-vuelo', verificarAdmin, vueloController.modificarEstadoVuelo); 
+router.put('/vuelos/modificar-estado-vuelo',verificarToken, verificarAdmin, vueloController.modificarEstadoVuelo); 
 
 /************************RUTA AEROLINEAS CONTROLLER*********************************/
 router.get('/aerolineas', aerolineaController.getAllAerolineas);

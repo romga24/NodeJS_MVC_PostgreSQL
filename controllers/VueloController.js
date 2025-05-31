@@ -40,7 +40,7 @@ exports.getVuelosConFiltro = async (req, res) => {
 exports.modificarEstadoVuelo = async (req, res) => {
   try {
     const { codigo_vuelo, estado_vuelo } = req.body;
-    if (!codigo_vuelo || !estado_vuelo || codigo_vuelo != 'C') {
+    if (!codigo_vuelo || !estado_vuelo || estado_vuelo != 'C') {
       return res.status(400).json({ error: 'Faltan parámetros' });
     }
     const vuelos = await VueloService.modificarEstadoVuelo(codigo_vuelo, estado_vuelo);
