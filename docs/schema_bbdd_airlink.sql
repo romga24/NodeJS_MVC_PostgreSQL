@@ -1,7 +1,7 @@
--- Table: public.t_aerolineas
+-- Creating enum type for flight status
+CREATE TYPE public.enum_t_vuelos_estado_vuelo AS ENUM ('Programado', 'Cancelado', 'Retrasado', 'Completado');
 
--- DROP TABLE IF EXISTS public.t_aerolineas;
-
+-- Creating table for airlines
 CREATE TABLE IF NOT EXISTS public.t_aerolineas
 (
     id_aerolinea integer NOT NULL DEFAULT nextval('t_aerolineas_id_aerolinea_seq'::regclass),
@@ -10,16 +10,12 @@ CREATE TABLE IF NOT EXISTS public.t_aerolineas
     CONSTRAINT t_aerolineas_pkey PRIMARY KEY (id_aerolinea),
     CONSTRAINT t_aerolineas_codigo_iata_key UNIQUE (codigo_iata)
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_aerolineas
     OWNER to airlink;
 
--- Table: public.t_aeropuertos
-
--- DROP TABLE IF EXISTS public.t_aeropuertos;
-
+-- Creating table for airports
 CREATE TABLE IF NOT EXISTS public.t_aeropuertos
 (
     id_aeropuerto integer NOT NULL DEFAULT nextval('t_aeropuertos_id_aeropuerto_seq'::regclass),
@@ -30,46 +26,12 @@ CREATE TABLE IF NOT EXISTS public.t_aeropuertos
     CONSTRAINT t_aeropuertos_pkey PRIMARY KEY (id_aeropuerto),
     CONSTRAINT t_aeropuertos_codigo_iata_key UNIQUE (codigo_iata)
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_aeropuertos
     OWNER to airlink;
 
--- Table: public.t_asientos
-
--- DROP TABLE IF EXISTS public.t_asientos;
-
-CREATE TABLE IF NOT EXISTS public.t_asientos
-(
-    id_asiento integer NOT NULL DEFAULT nextval('t_asientos_id_asiento_seq'::regclass),
-    id_avion integer,
-    id_vuelo integer,
-    fila integer NOT NULL,
-    columna character(255) COLLATE pg_catalog."default" NOT NULL,
-    codigo_asiento character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    clase character varying(255) COLLATE pg_catalog."default" DEFAULT 'economica'::character varying,
-    estado character varying(255) COLLATE pg_catalog."default" DEFAULT 'disponible'::character varying,
-    CONSTRAINT t_asientos_pkey PRIMARY KEY (id_asiento),
-    CONSTRAINT t_asientos_id_avion_fkey FOREIGN KEY (id_avion)
-        REFERENCES public.t_aviones (id_avion) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT t_asientos_id_vuelo_fkey FOREIGN KEY (id_vuelo)
-        REFERENCES public.t_vuelos (id_vuelo) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.t_asientos
-    OWNER to airlink;
-
--- Table: public.t_aviones
-
--- DROP TABLE IF EXISTS public.t_aviones;
-
+-- Creating table for aircraft
 CREATE TABLE IF NOT EXISTS public.t_aviones
 (
     id_avion integer NOT NULL DEFAULT nextval('t_aviones_id_avion_seq'::regclass),
@@ -79,54 +41,12 @@ CREATE TABLE IF NOT EXISTS public.t_aviones
     total_asientos integer NOT NULL,
     CONSTRAINT t_aviones_pkey PRIMARY KEY (id_avion)
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_aviones
     OWNER to airlink;
 
--- Table: public.t_billetes
-
--- DROP TABLE IF EXISTS public.t_billetes;
-
-CREATE TABLE IF NOT EXISTS public.t_billetes
-(
-    id_billete integer NOT NULL DEFAULT nextval('t_billetes_id_billete_seq'::regclass),
-    id_reserva integer,
-    id_vuelo integer,
-    id_pasajero integer,
-    id_asiento integer,
-    localizador character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    precio numeric NOT NULL,
-    CONSTRAINT t_billetes_pkey PRIMARY KEY (id_billete),
-    CONSTRAINT t_billetes_localizador_key UNIQUE (localizador),
-    CONSTRAINT t_billetes_id_asiento_fkey FOREIGN KEY (id_asiento)
-        REFERENCES public.t_asientos (id_asiento) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT t_billetes_id_pasajero_fkey FOREIGN KEY (id_pasajero)
-        REFERENCES public.t_pasajeros (id_pasajero) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE NO ACTION,
-    CONSTRAINT t_billetes_id_reserva_fkey FOREIGN KEY (id_reserva)
-        REFERENCES public.t_reservas (id_reserva) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT t_billetes_id_vuelo_fkey FOREIGN KEY (id_vuelo)
-        REFERENCES public.t_vuelos (id_vuelo) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.t_billetes
-    OWNER to airlink;
-
--- Table: public.t_clientes
-
--- DROP TABLE IF EXISTS public.t_clientes;
-
+-- Creating table for clients
 CREATE TABLE IF NOT EXISTS public.t_clientes
 (
     id_cliente integer NOT NULL DEFAULT nextval('t_clientes_id_cliente_seq'::regclass),
@@ -143,16 +63,12 @@ CREATE TABLE IF NOT EXISTS public.t_clientes
     CONSTRAINT t_clientes_nif_key UNIQUE (nif),
     CONSTRAINT t_clientes_nombre_usuario_key UNIQUE (nombre_usuario)
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_clientes
     OWNER to airlink;
 
--- Table: public.t_pasajeros
-
--- DROP TABLE IF EXISTS public.t_pasajeros;
-
+-- Creating table for passengers
 CREATE TABLE IF NOT EXISTS public.t_pasajeros
 (
     id_pasajero integer NOT NULL DEFAULT nextval('t_pasajeros_id_pasajero_seq'::regclass),
@@ -163,16 +79,12 @@ CREATE TABLE IF NOT EXISTS public.t_pasajeros
     nif character varying(255) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT t_pasajeros_pkey PRIMARY KEY (id_pasajero)
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_pasajeros
     OWNER to airlink;
 
--- Table: public.t_reservas
-
--- DROP TABLE IF EXISTS public.t_reservas;
-
+-- Creating table for reservations
 CREATE TABLE IF NOT EXISTS public.t_reservas
 (
     id_reserva integer NOT NULL DEFAULT nextval('t_reservas_id_reserva_seq'::regclass),
@@ -184,16 +96,12 @@ CREATE TABLE IF NOT EXISTS public.t_reservas
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_reservas
     OWNER to airlink;
 
--- Table: public.t_vuelos
-
--- DROP TABLE IF EXISTS public.t_vuelos;
-
+-- Creating table for flights
 CREATE TABLE IF NOT EXISTS public.t_vuelos
 (
     id_vuelo integer NOT NULL DEFAULT nextval('t_vuelos_id_vuelo_seq'::regclass),
@@ -225,8 +133,67 @@ CREATE TABLE IF NOT EXISTS public.t_vuelos
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 )
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_vuelos
+    OWNER to airlink;
+
+-- Creating table for seats
+CREATE TABLE IF NOT EXISTS public.t_asientos
+(
+    id_asiento integer NOT NULL DEFAULT nextval('t_asientos_id_asiento_seq'::regclass),
+    id_avion integer,
+    id_vuelo integer,
+    fila integer NOT NULL,
+    columna character(255) COLLATE pg_catalog."default" NOT NULL,
+    codigo_asiento character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    clase character varying(255) COLLATE pg_catalog."default" DEFAULT 'economica'::character varying,
+    estado character varying(255) COLLATE pg_catalog."default" DEFAULT 'disponible'::character varying,
+    CONSTRAINT t_asientos_pkey PRIMARY KEY (id_asiento),
+    CONSTRAINT t_asientos_id_avion_fkey FOREIGN KEY (id_avion)
+        REFERENCES public.t_aviones (id_avion) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT t_asientos_id_vuelo_fkey FOREIGN KEY (id_vuelo)
+        REFERENCES public.t_vuelos (id_vuelo) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.t_asientos
+    OWNER to airlink;
+
+-- Creating table for tickets
+CREATE TABLE IF NOT EXISTS public.t_billetes
+(
+    id_billete integer NOT NULL DEFAULT nextval('t_billetes_id_billete_seq'::regclass),
+    id_reserva integer,
+    id_vuelo integer,
+    id_pasajero integer,
+    id_asiento integer,
+    localizador character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    precio numeric NOT NULL,
+    CONSTRAINT t_billetes_pkey PRIMARY KEY (id_billete),
+    CONSTRAINT t_billetes_localizador_key UNIQUE (localizador),
+    CONSTRAINT t_billetes_id_asiento_fkey FOREIGN KEY (id_asiento)
+        REFERENCES public.t_asientos (id_asiento) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT t_billetes_id_pasajero_fkey FOREIGN KEY (id_pasajero)
+        REFERENCES public.t_pasajeros (id_pasajero) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION,
+    CONSTRAINT t_billetes_id_reserva_fkey FOREIGN KEY (id_reserva)
+        REFERENCES public.t_reservas (id_reserva) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT t_billetes_id_vuelo_fkey FOREIGN KEY (id_vuelo)
+        REFERENCES public.t_vuelos (id_vuelo) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.t_billetes
     OWNER to airlink;
