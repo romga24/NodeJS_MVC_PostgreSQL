@@ -12,9 +12,9 @@ API RESTful para gestionar reservas de vuelos. Modular, escalable y mantenible. 
 
 ## 🧱 Tecnologías
 
-- Node.js, Express.js, PostgreSQL, Sequelize  
-- JWT, Bcrypt, Nodemailer, EJS, Puppeteer  
-- Dotenv, CORS
+- Node.js, Express.js, PostgreSQL, Sequelize.  
+- JWT, Bcrypt, Nodemailer, EJS, Puppeteer.  
+- Dotenv, CORS.
 
 ---
 
