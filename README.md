@@ -1,4 +1,4 @@
-# ✈️ Sistema de Reservas de Vuelos - API REST
+# ✈️ Sistema de reservas de vuelos - API REST
 
 Backend desarrollado con **Node.js**, **Express.js** y **PostgreSQL**, siguiendo el patrón **MVC**. Soporta roles de **User** y **Admin**, autenticación JWT, envío de correos y generación de PDFs.
 
@@ -18,7 +18,7 @@ API RESTful para gestionar reservas de vuelos. Modular, escalable y mantenible. 
 
 ---
 
-## 🚀 Instalación Rápida
+## 🚀 Instalación rápida
 
 ```bash
 git clone https://github.com/romga24/NodeJS_MVC_PostgreSQL.git
