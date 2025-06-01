@@ -18,6 +18,14 @@ API RESTful para gestionar reservas de vuelos. Modular, escalable y mantenible. 
 
 ---
 
+## Arquitectura MVC en Node.js
+
+Este es un diagrama del flujo típico en una arquitectura MVC usando Node.js, Express y Sequelize:
+
+![Diagrama MVC Node.js](./docs/nodejs-mvc-diagrama.png)
+
+---
+
 ## 🚀 Instalación rápida
 
 ```bash
