@@ -26,6 +26,13 @@ Este es un diagrama del flujo típico en una arquitectura MVC usando Node.js, Ex
 
 ---
 
+---
+
+## Parte vista
+
+Se encuentra alojado en la carpeta airlink (todo el desarrollo relacionado con react)
+
+---
 ## 🚀 Instalación rápida
 
 ```bash
